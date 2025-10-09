@@ -10,6 +10,7 @@ class AdminUserSeeder extends Seeder
 {
     public function run()
     {
+        // Create Admin User
         User::create([
             'name' => 'Admin User',
             'email' => 'admin@example.com',
@@ -17,11 +18,15 @@ class AdminUserSeeder extends Seeder
             'role' => 'admin',
         ]);
 
+        // Create Regular User
         User::create([
             'name' => 'Regular User',
             'email' => 'user@example.com',
             'password' => Hash::make('password'),
             'role' => 'user',
         ]);
+
+        // Create additional test users
+        User::factory(5)->create();
     }
 }

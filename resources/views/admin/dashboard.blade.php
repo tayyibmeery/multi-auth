@@ -3,34 +3,143 @@
 @section('title', 'Admin Dashboard')
 
 @section('content')
-<div class="bg-white rounded-lg shadow-md p-6">
-    <h1 class="text-3xl font-bold text-gray-800 mb-6">Admin Dashboard</h1>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-blue-100 p-6 rounded-lg">
-            <h3 class="text-xl font-semibold text-blue-800">Total Users</h3>
-            <p class="text-3xl font-bold text-blue-600 mt-2">{{ \App\Models\User::count() }}</p>
-        </div>
-
-        <div class="bg-green-100 p-6 rounded-lg">
-            <h3 class="text-xl font-semibold text-green-800">Admins</h3>
-            <p class="text-3xl font-bold text-green-600 mt-2">{{ \App\Models\User::where('role', 'admin')->count() }}</p>
-        </div>
-
-        <div class="bg-purple-100 p-6 rounded-lg">
-            <h3 class="text-xl font-semibold text-purple-800">Regular Users</h3>
-            <p class="text-3xl font-bold text-purple-600 mt-2">{{ \App\Models\User::where('role', 'user')->count() }}</p>
+<div class="space-y-6">
+    <!-- Page Header -->
+    <div class="bg-white shadow rounded-lg p-6">
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+                <p class="text-gray-600">System overview and administration</p>
+            </div>
+            <div class="text-right">
+                <p class="text-sm text-gray-500">System Status</p>
+                <p class="text-lg font-semibold text-green-600">All Systems Operational</p>
+            </div>
         </div>
     </div>
 
-    <div class="mt-8">
-        <h3 class="text-2xl font-semibold mb-4">Admin Only Features</h3>
-        <ul class="list-disc list-inside space-y-2">
-            <li>User Management</li>
-            <li>System Configuration</li>
-            <li>Reports and Analytics</li>
-            <li>Admin Settings</li>
-        </ul>
+    <!-- Admin Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white shadow rounded-lg p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-blue-100 rounded-lg">
+                    <i class="fas fa-users text-blue-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Total Users</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ $stats['total_users'] }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white shadow rounded-lg p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-green-100 rounded-lg">
+                    <i class="fas fa-truck text-green-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Total Vendors</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ $stats['total_vendors'] }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white shadow rounded-lg p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-purple-100 rounded-lg">
+                    <i class="fas fa-layer-group text-purple-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Categories</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ $stats['total_categories'] ?? 0 }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white shadow rounded-lg p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-orange-100 rounded-lg">
+                    <i class="fas fa-clipboard-list text-orange-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">BOMs</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ $stats['total_boms'] ?? 0 }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Top Vendors -->
+        <div class="bg-white shadow rounded-lg p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Top Vendors</h2>
+            @if($topVendors->count() > 0)
+                <div class="space-y-4">
+                    @foreach($topVendors as $vendor)
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="p-2 bg-gray-100 rounded-lg">
+                                    <i class="fas fa-building text-gray-600"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="font-medium text-gray-900">{{ $vendor->name }}</p>
+                                    <p class="text-sm text-gray-600">{{ $vendor->purchases_count }} purchases</p>
+                                </div>
+                            </div>
+                            <span class="text-sm font-medium text-gray-900">₹{{ number_format($vendor->total_purchases, 2) }}</span>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <p class="text-gray-500 text-center py-4">No vendor data available</p>
+            @endif
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="bg-white shadow rounded-lg p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <a href="{{ route('vendors.create') }}" class="p-4 bg-blue-50 rounded-lg text-center hover:bg-blue-100 transition">
+                    <i class="fas fa-plus text-blue-600 text-xl mb-2"></i>
+                    <p class="text-sm font-medium text-gray-900">Add Vendor</p>
+                </a>
+                <a href="{{ route('categories.create') }}" class="p-4 bg-green-50 rounded-lg text-center hover:bg-green-100 transition">
+                    <i class="fas fa-tag text-green-600 text-xl mb-2"></i>
+                    <p class="text-sm font-medium text-gray-900">Add Category</p>
+                </a>
+                <a href="{{ route('items.create') }}" class="p-4 bg-purple-50 rounded-lg text-center hover:bg-purple-100 transition">
+                    <i class="fas fa-box text-purple-600 text-xl mb-2"></i>
+                    <p class="text-sm font-medium text-gray-900">Add Item</p>
+                </a>
+                <a href="{{ route('products.create') }}" class="p-4 bg-orange-50 rounded-lg text-center hover:bg-orange-100 transition">
+                    <i class="fas fa-cube text-orange-600 text-xl mb-2"></i>
+                    <p class="text-sm font-medium text-gray-900">Add Product</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Monthly Purchases Chart -->
+    <div class="bg-white shadow rounded-lg p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Monthly Purchases ({{ date('Y') }})</h2>
+        @if($monthlyPurchases->count() > 0)
+            <div class="space-y-4">
+                @foreach($monthlyPurchases as $purchase)
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-600">
+                            {{ DateTime::createFromFormat('!m', $purchase->month)->format('F') }}
+                        </span>
+                        <div class="w-3/4 bg-gray-200 rounded-full h-2">
+                            <div class="bg-blue-600 h-2 rounded-full"
+                                 style="width: {{ min(($purchase->total / 10000) * 100, 100) }}%"></div>
+                        </div>
+                        <span class="text-sm font-medium text-gray-900">₹{{ number_format($purchase->total, 2) }}</span>
+                    </div>
+                @endforeach
+            </div>
+        @else
+            <p class="text-gray-500 text-center py-4">No purchase data available for this year</p>
+        @endif
     </div>
 </div>
 @endsection

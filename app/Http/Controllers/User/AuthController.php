@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -26,7 +27,7 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $user = \App\Models\User::create([
+        $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => bcrypt($validated['password']),
@@ -35,7 +36,7 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect('/user/dashboard');
+        return redirect('/dashboard');
     }
 
     public function login(Request $request)
@@ -47,7 +48,7 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('/user/dashboard');
+            return redirect()->intended('/dashboard');
         }
 
         return back()->withErrors([

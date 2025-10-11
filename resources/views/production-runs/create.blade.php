@@ -67,7 +67,7 @@
 																				@enderror
 																</div>
 
-																<!-- BOM Items Preview -->
+																<!--  Bill of Materials Items Preview -->
 																<div id="bomItemsPreview" class="mb-6 hidden">
 																				<h3 class="mb-4 text-lg font-medium text-gray-900">Required Materials</h3>
 																				<div class="rounded-lg bg-gray-50 p-4">
@@ -133,7 +133,7 @@
 												const stockCheckResults = document.getElementById('stockCheckResults');
 												const submitBtn = document.getElementById('submitBtn');
 
-												// Load BOM details when selected
+												// Load  Bill of Materials details when selected
 												bomSelect.addEventListener('change', function() {
 																const selectedOption = this.options[this.selectedIndex];
 																if (selectedOption.value) {
@@ -144,7 +144,7 @@
 																				materialCost.textContent = 'Rs ' + parseFloat(cost).toFixed(2);
 																				productInfo.classList.remove('hidden');
 
-																				// Load BOM items
+																				// Load  Bill of Materials items
 																				loadBomItems(selectedOption.value);
 																} else {
 																				productInfo.classList.add('hidden');
@@ -160,7 +160,7 @@
 																}
 												});
 
-												// Load BOM items via AJAX
+												// Load  Bill of Materials items via AJAX
 												function loadBomItems(bomId) {
 																fetch(`/boms/${bomId}/items`)
 																				.then(response => response.json())
@@ -170,11 +170,11 @@
 																								checkStockAvailability(data.items, quantityInput.value);
 																				})
 																				.catch(error => {
-																								console.error('Error loading BOM items:', error);
+																								console.error('Error loading  Bill of Materials items:', error);
 																				});
 												}
 
-												// Display BOM items
+												// Display  Bill of Materials items
 												function displayBomItems(items, quantity) {
 																materialsTableBody.innerHTML = '';
 																let allItemsInStock = true;
@@ -262,7 +262,7 @@
 																return allInStock;
 												}
 
-												// Pre-fill BOM if provided in URL
+												// Pre-fill  Bill of Materials if provided in URL
 												const urlParams = new URLSearchParams(window.location.search);
 												const bomId = urlParams.get('bom_id');
 												const productId = urlParams.get('product_id');
@@ -271,7 +271,7 @@
 																bomSelect.value = bomId;
 																bomSelect.dispatchEvent(new Event('change'));
 												} else if (productId) {
-																// If product ID is provided, select the first active BOM for that product
+																// If product ID is provided, select the first active  Bill of Materials for that product
 																const options = Array.from(bomSelect.options);
 																const productBom = options.find(option => {
 																				return option.getAttribute('data-product-id') === productId && option.value !== '';

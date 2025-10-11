@@ -9,7 +9,7 @@
 												<div class="flex items-center justify-between">
 																<div>
 																				<h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
-																				<p class="text-gray-600">Welcome back, {{ auth()->user()->name }}!</p>
+																				<p class="text-gray-600">Welcome , {{ auth()->user()->name }}!</p>
 																</div>
 																<div class="text-right">
 																				<p class="text-sm text-gray-500">Today is</p>

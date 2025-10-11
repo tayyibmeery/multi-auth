@@ -104,17 +104,18 @@
 																				@if ($product->billOfMaterials->count() > 0)
 																								<a href="{{ route("boms.index") }}?product_id={{ $product->id }}"
 																												class="block w-full rounded-lg bg-purple-600 px-4 py-2 text-center text-white hover:bg-purple-700">
-																												<i class="fas fa-list-alt mr-2"></i>View BOMs ({{ $product->billOfMaterials->count() }})
+																												<i class="fas fa-list-alt mr-2"></i>ViewBill of
+																												Materials({{ $product->billOfMaterials->count() }})
 																								</a>
 																				@endif
 																</div>
 												</div>
 								</div>
 
-								<!-- Bill of Materials -->
+								<!--   Bill of Materials  -->
 								@if ($product->billOfMaterials->count() > 0)
 												<div class="rounded-lg bg-white p-6 shadow">
-																<h3 class="mb-4 text-lg font-semibold text-gray-900">Bill of Materials</h3>
+																<h3 class="mb-4 text-lg font-semibold text-gray-900"> Bill of Materials </h3>
 																<div class="overflow-x-auto">
 																				<table class="min-w-full divide-y divide-gray-200">
 																								<thead class="bg-gray-50">

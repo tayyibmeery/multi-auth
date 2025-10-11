@@ -1,12 +1,12 @@
 @extends("layouts.app")
 
-@section("title", "Bill of Materials")
+@section("title", " Bill of Materials ")
 
 @section("content")
 				<div class="space-y-6">
 								<div class="flex items-center justify-between">
 												<div>
-																<h1 class="text-2xl font-bold text-gray-900">Bill of Materials</h1>
+																<h1 class="text-2xl font-bold text-gray-900"> Bill of Materials </h1>
 																<p class="text-gray-600">Manage product recipes and components</p>
 												</div>
 												<a href="{{ route("boms.create") }}"
@@ -15,7 +15,7 @@
 												</a>
 								</div>
 
-								<!-- BOMs Table -->
+								<!--  Bill of Materials Table -->
 								<div class="overflow-hidden rounded-lg bg-white shadow">
 												<div class="overflow-x-auto">
 																<table class="min-w-full divide-y divide-gray-200">
@@ -103,7 +103,7 @@
 																								@empty
 																												<tr>
 																																<td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">
-																																				No BOMs found. <a href="{{ route("boms.create") }}"
+																																				No Bill of Materials found. <a href="{{ route("boms.create") }}"
 																																								class="text-blue-600 hover:text-blue-500">Create the first BOM</a>.
 																																</td>
 																												</tr>

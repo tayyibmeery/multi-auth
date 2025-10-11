@@ -13,7 +13,9 @@ class ProductionRun extends Model
         'batch_number', 'bom_id', 'quantity_to_produce', 'actual_quantity',
         'status', 'production_date', 'completion_date', 'notes', 'user_id'
     ];
-
+protected $casts = [
+    'production_date' => 'datetime',
+];
     protected static function boot()
     {
         parent::boot();

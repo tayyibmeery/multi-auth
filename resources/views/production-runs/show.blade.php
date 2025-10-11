@@ -124,7 +124,7 @@
 																<div class="space-y-3">
 																				<a href="{{ route("boms.show", $productionRun->billOfMaterial) }}"
 																								class="block w-full rounded-lg bg-purple-600 px-4 py-2 text-center text-white hover:bg-purple-700">
-																								<i class="fas fa-list-alt mr-2"></i>View BOM Details
+																								<i class="fas fa-list-alt mr-2"></i>View Bill of Materials Details
 																				</a>
 																				<a href="{{ route("products.show", $productionRun->billOfMaterial->product) }}"
 																								class="block w-full rounded-lg bg-blue-600 px-4 py-2 text-center text-white hover:bg-blue-700">

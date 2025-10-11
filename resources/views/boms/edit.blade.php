@@ -12,7 +12,7 @@
 																@csrf
 																@method("PUT")
 
-																<!-- BOM Header -->
+																<!--  Bill of Materials Header -->
 																<div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
 																				<div>
 																								<label for="product_id" class="block text-sm font-medium text-gray-700">Product *</label>
@@ -48,7 +48,7 @@
 																				    class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500">{{ old("description", $bom->description) }}</textarea>
 																</div>
 
-																<!-- BOM Items -->
+																<!--  Bill of Materials Items -->
 																<div class="mb-6">
 																				<div class="mb-4 flex items-center justify-between">
 																								<h3 class="text-lg font-medium text-gray-900">BOM Items</h3>
@@ -115,7 +115,7 @@
 																								{{ old("is_active", $bom->is_active) ? "checked" : "" }}
 																								class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
 																				<label for="is_active" class="ml-2 block text-sm text-gray-900">
-																								Active BOM (can be used for production)
+																								Active Bill of Materials (can be used for production)
 																				</label>
 																</div>
 
@@ -141,7 +141,7 @@
 												const addBomItemBtn = document.getElementById('addBomItem');
 												const totalEstimatedCostSpan = document.getElementById('totalEstimatedCost');
 
-												// Add new BOM item row
+												// Add new  Bill of Materials item row
 												addBomItemBtn.addEventListener('click', function() {
 																const newRow = document.createElement('div');
 																newRow.className = 'bom-item-row grid grid-cols-12 gap-4 mb-4 items-end';
@@ -178,7 +178,7 @@
 																addBomItemEventListeners(newRow);
 												});
 
-												// Add event listeners to a BOM item row
+												// Add event listeners to a  Bill of Materials item row
 												function addBomItemEventListeners(row) {
 																const itemSelect = row.querySelector('.item-select');
 																const quantityInput = row.querySelector('.quantity-input');

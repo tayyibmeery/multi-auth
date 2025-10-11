@@ -13,6 +13,10 @@ class Purchase extends Model
         'purchase_number', 'vendor_id', 'purchase_date',
         'total_amount', 'notes', 'user_id'
     ];
+    protected $casts = [
+    'purchase_date' => 'datetime',
+];
+
 
     protected static function boot()
     {

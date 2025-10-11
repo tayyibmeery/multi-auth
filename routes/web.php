@@ -53,7 +53,7 @@ Route::middleware(['auth'])->group(function () {
     // Products - CRUD (Both can access)
     Route::resource('products', ProductController::class);
 
-    // Bill of Materials - CRUD (Both can access)
+    //   Bill of Materials  - CRUD (Both can access)
     Route::resource('boms', BillOfMaterialController::class);
 
     // Production Runs - CRUD (Both can access)
@@ -87,7 +87,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 });
 
 
-// BOM Items API for production
+//  Bill of Materials Items API for production
 Route::get('/boms/{bom}/items', function ($bom) {
     $bom = \App\Models\BillOfMaterial::with('bomItems.item')->findOrFail($bom);
     return response()->json([

@@ -26,7 +26,7 @@
 								</div>
 
 								<div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-												<!-- BOM Information -->
+												<!--  Bill of Materials Information -->
 												<div class="rounded-lg bg-white p-6 shadow">
 																<h3 class="mb-4 text-lg font-semibold text-gray-900">BOM Information</h3>
 																<dl class="space-y-3">
@@ -143,7 +143,7 @@
 												</div>
 								</div>
 
-								<!-- BOM Items -->
+								<!--  Bill of Materials Items -->
 								<div class="rounded-lg bg-white p-6 shadow">
 												<h3 class="mb-4 text-lg font-semibold text-gray-900">BOM Items</h3>
 												<div class="overflow-x-auto">

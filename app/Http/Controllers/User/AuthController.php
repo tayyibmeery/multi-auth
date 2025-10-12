@@ -11,6 +11,9 @@ class AuthController extends Controller
 {
     public function showLoginForm()
     {
+         if (auth()->check()) {
+             return redirect('/dashboard');
+    }
         return view('user.auth.login');
     }
 
@@ -21,22 +24,24 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
         ]);
+   return redirect()->route('login')->with('error', 'Registration is not available. Please contact your administrator for access.');
 
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => bcrypt($validated['password']),
-            'role' => 'user',
-        ]);
+        // $user = User::create([
+        //     'name' => $validated['name'],
+        //     'email' => $validated['email'],
+        //     'password' => bcrypt($validated['password']),
+        //     'role' => 'guest',
+        // ]);
 
-        Auth::login($user);
+        // Auth::login($user);
 
-        return redirect('/dashboard');
+        // return redirect('/dashboard');
     }
 
     public function login(Request $request)
@@ -62,6 +67,6 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/user/login');
+        return redirect('/login');
     }
 }

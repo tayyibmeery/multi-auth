@@ -21,21 +21,16 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Admin Authentication Routes
-Route::prefix('admin')->group(function () {
-    Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
-    Route::post('/login', [AdminAuthController::class, 'login']);
-    Route::post('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
-});
+
 
 // User Authentication Routes
-Route::prefix('user')->group(function () {
-    Route::get('/login', [UserAuthController::class, 'showLoginForm'])->name('user.login');
+
+    Route::get('/login', [UserAuthController::class, 'showLoginForm'])->name('login') ->middleware('guest');
     Route::post('/login', [UserAuthController::class, 'login']);
-    Route::get('/register', [UserAuthController::class, 'showRegisterForm'])->name('user.register');
+    Route::get('/register', [UserAuthController::class, 'showRegisterForm'])->name('register');
     Route::post('/register', [UserAuthController::class, 'register']);
-    Route::post('/logout', [UserAuthController::class, 'logout'])->name('user.logout');
-});
+    Route::post('/logout', [UserAuthController::class, 'logout'])->name('logout');
+
 
 // Protected Routes - Both Admin and User
 Route::middleware(['auth'])->group(function () {

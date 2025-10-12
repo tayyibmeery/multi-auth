@@ -1,13 +1,13 @@
-@extends('layouts.app')
+@extends("layouts.app")
 
-@section('title', 'User Registration')
+@section("title", "User Registration")
 
-@section('content')
-<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8">
+@section("content")
+<div class="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+    <div class="w-full max-w-md space-y-8">
         <div>
-            <div class="mx-auto h-12 w-12 bg-green-600 rounded-full flex items-center justify-center">
-                <i class="fas fa-user-plus text-white text-xl"></i>
+            <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-600">
+                <i class="fas fa-user-plus text-xl text-white"></i>
             </div>
             <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
                 Create Account
@@ -17,52 +17,45 @@
             </p>
         </div>
 
-        <form class="mt-8 space-y-6" method="POST" action="{{ route('user.register') }}">
+        <form class="mt-8 space-y-6" method="POST" action="{{ route("register") }}">
             @csrf
 
-            <div class="rounded-md shadow-sm space-y-4">
+            <div class="space-y-4 rounded-md shadow-sm">
                 <div>
                     <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
-                    <input id="name" name="name" type="text" required
-                           class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
-                           placeholder="Enter your full name" value="{{ old('name') }}">
+                    <input id="name" name="name" type="text" required class="relative mt-1 block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-green-500 focus:outline-none focus:ring-green-500 sm:text-sm" placeholder="Enter your full name" value="{{ old("name") }}">
                 </div>
 
                 <div>
                     <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
-                    <input id="email" name="email" type="email" autocomplete="email" required
-                           class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
-                           placeholder="Enter your email" value="{{ old('email') }}">
+                    <input id="email" name="email" type="email" autocomplete="email" required class="relative mt-1 block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-green-500 focus:outline-none focus:ring-green-500 sm:text-sm" placeholder="Enter your email" value="{{ old("email") }}">
                 </div>
 
                 <div>
                     <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                    <input id="password" name="password" type="password" autocomplete="new-password" required
-                           class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
-                           placeholder="Create a password">
+                    <input id="password" name="password" type="password" autocomplete="new-password" required class="relative mt-1 block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-green-500 focus:outline-none focus:ring-green-500 sm:text-sm" placeholder="Create a password">
                 </div>
 
                 <div>
-                    <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirm Password</label>
-                    <input id="password_confirmation" name="password_confirmation" type="password" autocomplete="new-password" required
-                           class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
-                           placeholder="Confirm your password">
+                    <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirm
+                        Password</label>
+                    <input id="password_confirmation" name="password_confirmation" type="password" autocomplete="new-password" required class="relative mt-1 block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-green-500 focus:outline-none focus:ring-green-500 sm:text-sm" placeholder="Confirm your password">
                 </div>
             </div>
 
-            @if($errors->any())
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                    <ul class="list-disc list-inside text-sm">
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
+            @if ($errors->any())
+            <div class="rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700">
+                <ul class="list-inside list-disc text-sm">
+                    @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
             @endif
 
             <div>
-                <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                    <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                <button type="submit" class="group relative flex w-full justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
                         <i class="fas fa-user-plus text-green-300 group-hover:text-green-400"></i>
                     </span>
                     Create Account
@@ -70,7 +63,7 @@
             </div>
 
             <div class="text-center">
-                <a href="{{ route('user.login') }}" class="text-green-600 hover:text-green-500 text-sm">
+                <a href="{{ route("login") }}" class="text-sm text-green-600 hover:text-green-500">
                     Already have an account? Sign in
                 </a>
             </div>

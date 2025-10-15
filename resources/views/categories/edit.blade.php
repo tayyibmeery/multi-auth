@@ -33,7 +33,8 @@
                     <h4 class="text-sm font-medium text-gray-700 mb-2">Category Statistics</h4>
                     <div class="grid grid-cols-2 gap-4 text-sm">
                         <div>
-                            <span class="text-gray-600">Items in this category:</span>
+                            <span class="text-gray-600">Spare Parts in this category:</span>
+
                             <span class="font-semibold text-blue-600 ml-2">{{ $category->items_count }}</span>
                         </div>
                         <div>
@@ -52,7 +53,8 @@
                             <div class="ml-3">
                                 <h3 class="text-sm font-medium text-yellow-800">Important Notice</h3>
                                 <div class="mt-2 text-sm text-yellow-700">
-                                    <p>This category contains {{ $category->items_count }} items. Editing the category name will update it for all associated items.</p>
+                                    <p>This category contains {{ $category->items_count }} Spare Parts . Editing the category name will update it for all associated items.</p>
+
                                 </div>
                             </div>
                         </div>

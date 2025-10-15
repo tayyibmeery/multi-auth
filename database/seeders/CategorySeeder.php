@@ -16,7 +16,7 @@ class CategorySeeder extends Seeder
             ['name' => 'Plastics', 'description' => 'Plastic materials and components'],
             ['name' => 'Metals', 'description' => 'Metal parts and raw materials'],
             ['name' => 'Packaging', 'description' => 'Packaging materials'],
-            ['name' => 'Consumables', 'description' => 'Consumable items and supplies'],
+            ['name' => 'Consumables', 'description' => 'Consumable spare parts and supplies'],
         ];
 
         foreach ($categories as $category) {

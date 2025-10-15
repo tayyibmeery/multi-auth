@@ -139,7 +139,8 @@
                         <li class="nav-item">
                             <a href="{{ route("items.index") }}" class="nav-link {{ request()->routeIs("items.*") ? "active" : "" }}">
                                 <i class="nav-icon fas fa-boxes"></i>
-                                <p>Items</p>
+                                <p>Spare Parts </p>
+
                             </a>
                         </li>
                         <li class="nav-item">
@@ -314,7 +315,8 @@
             }, 5000);
 
             // Confirm delete with better styling
-            window.confirmDelete = function(message = 'Are you sure you want to delete this item?') {
+            window.confirmDelete = function(message = 'Are you sure you want to delete this Spare Part?') {
+
                 return confirm(message);
             };
 

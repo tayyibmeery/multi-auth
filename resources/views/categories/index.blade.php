@@ -7,7 +7,8 @@
     <div class="flex justify-between items-center">
         <div>
             <h1 class="text-2xl font-bold text-gray-900">Categories</h1>
-            <p class="text-gray-600">Manage item categories</p>
+            <p class="text-gray-600">Manage Spare Part categories</p>
+
         </div>
         <a href="{{ route('categories.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium">
             <i class="fas fa-plus mr-2"></i>Add Category
@@ -21,7 +22,8 @@
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Items Count</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Spare Parts Count</th>
+
                         <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
                     </tr>
                 </thead>
@@ -36,7 +38,8 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                                    {{ $category->items_count }} items
+                                    {{ $category->items_count }} Spare Parts
+
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

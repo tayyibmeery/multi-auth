@@ -26,7 +26,8 @@
                     <i class="fas fa-boxes text-xl text-blue-600"></i>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600">Total Items</p>
+                    <p class="text-sm font-medium text-gray-600">Total Spare Parts</p>
+
                     <p class="text-2xl font-semibold text-gray-900">{{ $stats["total_items"] }}</p>
                 </div>
             </div>
@@ -75,13 +76,15 @@
             <h2 class="text-lg font-semibold text-gray-900">Stock Valuation</h2>
             <span class="text-2xl font-bold text-green-600">Rs {{ number_format($totalStockValue, 2) }}</span>
         </div>
-        <p class="text-sm text-gray-600">Total value of all items and products in stock</p>
+        <p class="text-sm text-gray-600">Total value of all Spare Parts and products in stock</p>
+
     </div>
 
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <!-- Low Stock Items -->
         <div class="rounded-lg bg-white p-6 shadow">
-            <h2 class="mb-4 text-lg font-semibold text-gray-900">Low Stock Items</h2>
+            <h2 class="mb-4 text-lg font-semibold text-gray-900">Low Stock Spare Parts </h2>
+
             @if ($lowStockItems->count() > 0)
             <div class="space-y-3">
                 @foreach ($lowStockItems as $item)
@@ -96,11 +99,13 @@
                 @endforeach
             </div>
             @else
-            <p class="py-4 text-center text-gray-500">All items are sufficiently stocked</p>
+            <p class="py-4 text-center text-gray-500">All Spare Parts are sufficiently stocked</p>
+
             @endif
             <div class="mt-4">
                 <a href="{{ route("items.low-stock") }}" class="text-sm font-medium text-blue-600 hover:text-blue-500">
-                    View all low stock items →
+                    View all low stock Spare Parts →
+
                 </a>
             </div>
         </div>

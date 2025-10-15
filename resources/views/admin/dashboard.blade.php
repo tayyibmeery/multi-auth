@@ -110,7 +110,8 @@
                 </a>
                 <a href="{{ route("items.create") }}" class="rounded-lg bg-purple-50 p-4 text-center transition hover:bg-purple-100">
                     <i class="fas fa-box mb-2 text-xl text-purple-600"></i>
-                    <p class="text-sm font-medium text-gray-900">Add Item</p>
+                    <p class="text-sm font-medium text-gray-900">Add Spare Parts </p>
+
                 </a>
                 <a href="{{ route("products.create") }}" class="rounded-lg bg-orange-50 p-4 text-center transition hover:bg-orange-100">
                     <i class="fas fa-cube mb-2 text-xl text-orange-600"></i>

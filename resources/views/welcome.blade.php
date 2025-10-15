@@ -184,15 +184,15 @@
                                 Admin Features
                             </h4>
                             <ul class="space-y-2 text-sm">
-                                <li class="flex items-start text-gray-700">
+                                <li class="flex spare partss-start text-gray-700">
                                     <i class="fas fa-check-circle text-blue-500 mr-2 mt-0.5"></i>
                                     <span>Manage users & permissions</span>
                                 </li>
-                                <li class="flex items-start text-gray-700">
+                                <li class="flex spare partss-start text-gray-700">
                                     <i class="fas fa-check-circle text-blue-500 mr-2 mt-0.5"></i>
                                     <span>Configure system settings</span>
                                 </li>
-                                <li class="flex items-start text-gray-700">
+                                <li class="flex spare partss-start text-gray-700">
                                     <i class="fas fa-check-circle text-blue-500 mr-2 mt-0.5"></i>
                                     <span>Vendor & category management</span>
                                 </li>
@@ -200,20 +200,20 @@
                         </div>
 
                         <div>
-                            <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
+                            <h4 class="font-semibold text-gray-800 mb-3 flex spare partss-center">
                                 <i class="fas fa-user text-green-500 mr-2"></i>
                                 User Features
                             </h4>
                             <ul class="space-y-2 text-sm">
-                                <li class="flex items-start text-gray-700">
+                                <li class="flex spare partss-start text-gray-700">
                                     <i class="fas fa-check-circle text-green-500 mr-2 mt-0.5"></i>
-                                    <span>Manage inventory items</span>
+                                    <span>Manage inventory spare partss</span>
                                 </li>
-                                <li class="flex items-start text-gray-700">
+                                <li class="flex spare partss-start text-gray-700">
                                     <i class="fas fa-check-circle text-green-500 mr-2 mt-0.5"></i>
                                     <span>Process purchases</span>
                                 </li>
-                                <li class="flex items-start text-gray-700">
+                                <li class="flex spare partss-start text-gray-700">
                                     <i class="fas fa-check-circle text-green-500 mr-2 mt-0.5"></i>
                                     <span>Track production runs</span>
                                 </li>
@@ -251,18 +251,19 @@
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
             <!-- Feature 1 -->
             <div class="feature-card bg-white rounded-xl p-6 shadow-md">
-                <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-blue-100 mb-4">
+                <div class="inline-flex spare partss-center justify-center w-14 h-14 rounded-full bg-blue-100 mb-4">
                     <i class="fas fa-boxes text-2xl text-blue-600"></i>
                 </div>
                 <h3 class="text-xl font-bold text-gray-800 mb-2">Inventory Tracking</h3>
                 <p class="text-gray-600">
-                    Real-time tracking of all inventory items with detailed stock levels, locations, and movement history
+                    Real-time tracking of all inventory Spare Parts with detailed stock levels, locations, and movement history
+
                 </p>
             </div>
 
             <!-- Feature 2 -->
             <div class="feature-card bg-white rounded-xl p-6 shadow-md">
-                <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-green-100 mb-4">
+                <div class="inline-flex spare partss-center justify-center w-14 h-14 rounded-full bg-green-100 mb-4">
                     <i class="fas fa-industry text-2xl text-green-600"></i>
                 </div>
                 <h3 class="text-xl font-bold text-gray-800 mb-2">Production Management</h3>
@@ -273,7 +274,7 @@
 
             <!-- Feature 3 -->
             <div class="feature-card bg-white rounded-xl p-6 shadow-md">
-                <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-purple-100 mb-4">
+                <div class="inline-flex spare partss-center justify-center w-14 h-14 rounded-full bg-purple-100 mb-4">
                     <i class="fas fa-shopping-cart text-2xl text-purple-600"></i>
                 </div>
                 <h3 class="text-xl font-bold text-gray-800 mb-2">Purchase Orders</h3>
@@ -284,7 +285,7 @@
 
             <!-- Feature 4 -->
             <div class="feature-card bg-white rounded-xl p-6 shadow-md">
-                <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-yellow-100 mb-4">
+                <div class="inline-flex spare partss-center justify-center w-14 h-14 rounded-full bg-yellow-100 mb-4">
                     <i class="fas fa-chart-line text-2xl text-yellow-600"></i>
                 </div>
                 <h3 class="text-xl font-bold text-gray-800 mb-2">Analytics & Reports</h3>
@@ -295,7 +296,7 @@
 
             <!-- Feature 5 -->
             <div class="feature-card bg-white rounded-xl p-6 shadow-md">
-                <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-red-100 mb-4">
+                <div class="inline-flex spare partss-center justify-center w-14 h-14 rounded-full bg-red-100 mb-4">
                     <i class="fas fa-exclamation-triangle text-2xl text-red-600"></i>
                 </div>
                 <h3 class="text-xl font-bold text-gray-800 mb-2">Low Stock Alerts</h3>
@@ -306,7 +307,7 @@
 
             <!-- Feature 6 -->
             <div class="feature-card bg-white rounded-xl p-6 shadow-md">
-                <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-indigo-100 mb-4">
+                <div class="inline-flex spare partss-center justify-center w-14 h-14 rounded-full bg-indigo-100 mb-4">
                     <i class="fas fa-history text-2xl text-indigo-600"></i>
                 </div>
                 <h3 class="text-xl font-bold text-gray-800 mb-2">Stock Ledger</h3>
@@ -317,7 +318,7 @@
 
             <!-- Feature 7 -->
             <div class="feature-card bg-white rounded-xl p-6 shadow-md">
-                <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-pink-100 mb-4">
+                <div class="inline-flex spare partss-center justify-center w-14 h-14 rounded-full bg-pink-100 mb-4">
                     <i class="fas fa-tags text-2xl text-pink-600"></i>
                 </div>
                 <h3 class="text-xl font-bold text-gray-800 mb-2">Category Management</h3>
@@ -328,7 +329,7 @@
 
             <!-- Feature 8 -->
             <div class="feature-card bg-white rounded-xl p-6 shadow-md">
-                <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-teal-100 mb-4">
+                <div class="inline-flex spare partss-center justify-center w-14 h-14 rounded-full bg-teal-100 mb-4">
                     <i class="fas fa-truck text-2xl text-teal-600"></i>
                 </div>
                 <h3 class="text-xl font-bold text-gray-800 mb-2">Vendor Management</h3>
@@ -339,7 +340,7 @@
 
             <!-- Feature 9 -->
             <div class="feature-card bg-white rounded-xl p-6 shadow-md">
-                <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-orange-100 mb-4">
+                <div class="inline-flex spare partss-center justify-center w-14 h-14 rounded-full bg-orange-100 mb-4">
                     <i class="fas fa-cube text-2xl text-orange-600"></i>
                 </div>
                 <h3 class="text-xl font-bold text-gray-800 mb-2">Product Assembly</h3>

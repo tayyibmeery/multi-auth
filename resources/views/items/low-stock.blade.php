@@ -1,110 +1,206 @@
 @extends("layouts.app")
 
-@section("title", "Low Stock Spare Parts ")
+@section("title", "Low Stock Spare Parts")
 
+@push('styles')
+<!-- DataTables -->
+<link rel="stylesheet" href="{{ asset('plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
+<link rel="stylesheet" href="{{ asset('plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
+@endpush
 
 @section("content")
-<div class="space-y-6">
-    <div class="flex items-center justify-between">
-        <div>
-            <h1 class="text-2xl font-bold text-gray-900">Low Stock Spare Parts </h1>
-
-            <p class="text-gray-600">Spare Parts that need to be reordered</p>
-
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Low Stock Spare Parts</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('items.index') }}">Spare Parts</a></li>
+                    <li class="breadcrumb-item active">Low Stock</li>
+                </ol>
+            </div>
         </div>
-        <a href="{{ route("items.index") }}" class="rounded-lg bg-gray-600 px-4 py-2 font-medium text-white hover:bg-gray-700">
-            <i class="fas fa-arrow-left mr-2"></i>Back to Spare Parts
+    </div><!-- /.container-fluid -->
+</section>
 
-        </a>
-    </div>
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-warning">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            Low Stock Alert - Spare Parts that need to be reordered
+                        </h3>
+                        <div class="card-tools">
+                            <div class="btn-group">
+                                <a href="{{ route('items.out-of-stock') }}" class="btn btn-danger btn-sm mr-2">
+                                    <i class="fas fa-times-circle mr-1"></i> Out of Stock
+                                </a>
+                                <a href="{{ route('items.index') }}" class="btn btn-secondary btn-sm mr-2">
+                                    <i class="fas fa-boxes mr-1"></i> All Spare Parts
+                                </a>
+                                <a href="{{ route('items.create') }}" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-plus mr-1"></i> Add Spare Part
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        @if($items->count() > 0)
+                        <div class="table-responsive">
+                            <table id="lowStockTable" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Spare Part</th>
+                                        <th>Category</th>
+                                        <th>Current Stock</th>
+                                        <th>Minimum Stock</th>
+                                        <th>Required</th>
+                                        <th>Price</th>
+                                        <th>Stock Value</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($items as $item)
+                                    <tr>
+                                        <td>
+                                            <div class="font-weight-bold text-primary">{{ $item->name }}</div>
+                                            <small class="text-muted">{{ $item->code }}</small>
+                                            @if($item->description)
+                                            <br><small class="text-muted">{{ Str::limit($item->description, 50) }}</small>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-info">{{ $item->category->name }}</span>
+                                        </td>
+                                        <td>
+                                            <div class="font-weight-bold text-danger">{{ $item->current_stock }} {{ $item->unit }}</div>
+                                        </td>
+                                        <td>{{ $item->min_stock }} {{ $item->unit }}</td>
+                                        <td>
+                                            <div class="font-weight-bold text-warning">
+                                                {{ max(0, $item->min_stock - $item->current_stock) }} {{ $item->unit }}
+                                            </div>
+                                        </td>
+                                        <td class="font-weight-bold text-success">Rs {{ number_format($item->current_price, 2) }}</td>
+                                        <td class="font-weight-bold text-info">Rs {{ number_format($item->stock_value, 2) }}</td>
+                                        <td class="text-center">
+                                            <div class="btn-group">
+                                                <a href="{{ route('purchases.create') }}?item_id={{ $item->id }}" class="btn btn-sm btn-success" title="Purchase">
+                                                    <i class="fas fa-shopping-cart"></i>
+                                                </a>
+                                                <a href="{{ route('items.show', $item) }}" class="btn btn-sm btn-info" title="View">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="{{ route('items.edit', $item) }}" class="btn btn-sm btn-warning" title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>Spare Part</th>
+                                        <th>Category</th>
+                                        <th>Current Stock</th>
+                                        <th>Minimum Stock</th>
+                                        <th>Required</th>
+                                        <th>Price</th>
+                                        <th>Stock Value</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
 
-    <div class="overflow-hidden rounded-lg bg-white shadow">
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-red-50">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-red-800">Spare Part
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-red-800">
-                            Category</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-red-800">
-                            Current Stock</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-red-800">
-                            Minimum Stock</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-red-800">
-                            Required</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-red-800">Price
-                        </th>
-                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-red-800">
-                            Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200 bg-white">
-                    @forelse($items as $item)
-                    <tr class="hover:bg-red-50">
-                        <td class="whitespace-nowrap px-6 py-4">
-                            <div class="flex items-center">
-                                <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-red-100">
-                                    <i class="fas fa-exclamation-triangle text-red-600"></i>
+                        <!-- Pagination -->
+                        <div class="mt-3">
+                            {{ $items->links() }}
+                        </div>
+                        @else
+                        <div class="text-center py-5">
+                            <div class="text-success">
+                                <i class="fas fa-check-circle fa-3x mb-3"></i>
+                                <h4>All Spare Parts are sufficiently stocked!</h4>
+                                <p class="mb-4">No low stock spare parts found.</p>
+                                <div class="btn-group">
+                                    <a href="{{ route('items.index') }}" class="btn btn-primary">
+                                        <i class="fas fa-boxes mr-2"></i>View All Spare Parts
+                                    </a>
+                                    <a href="{{ route('items.out-of-stock') }}" class="btn btn-danger">
+                                        <i class="fas fa-times-circle mr-2"></i>Check Out of Stock
+                                    </a>
                                 </div>
-                                <div class="ml-4">
-                                    <div class="text-sm font-medium text-gray-900">{{ $item->name }}</div>
-                                    <div class="text-sm text-gray-500">{{ $item->code }}</div>
-                                </div>
                             </div>
-                        </td>
-                        <td class="whitespace-nowrap px-6 py-4">
-                            <div class="text-sm text-gray-900">{{ $item->category->name }}</div>
-                        </td>
-                        <td class="whitespace-nowrap px-6 py-4">
-                            <div class="text-sm font-semibold text-red-600">{{ $item->current_stock }}
-                                {{ $item->unit }}</div>
-                        </td>
-                        <td class="whitespace-nowrap px-6 py-4">
-                            <div class="text-sm text-gray-900">{{ $item->min_stock }} {{ $item->unit }}</div>
-                        </td>
-                        <td class="whitespace-nowrap px-6 py-4">
-                            <div class="text-sm font-semibold text-red-600">
-                                {{ max(0, $item->min_stock - $item->current_stock) }} {{ $item->unit }}
-                            </div>
-                        </td>
-                        <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
-                            Rs {{ number_format($item->current_price, 2) }}
-                        </td>
-                        <td class="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                            <a href="{{ route("purchases.create") }}?item_id={{ $item->id }}" class="mr-3 text-green-600 hover:text-green-900">
-                                <i class="fas fa-shopping-cart"></i> Purchase
-                            </a>
-                            <a href="{{ route("items.show", $item) }}" class="mr-3 text-blue-600 hover:text-blue-900">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            <a href="{{ route("items.edit", $item) }}" class="text-yellow-600 hover:text-yellow-900">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">
-                            <div class="flex flex-col items-center justify-center py-8">
-                                <i class="fas fa-check-circle mb-4 text-4xl text-green-500"></i>
-                                <p class="text-lg font-medium text-gray-900">All Spare Parts are sufficiently stocked!</p>
+                        </div>
+                        @endif
+                    </div>
+                    <!-- /.card-body -->
 
-                                <p class="text-gray-600">No low stock Spare Parts found.</p>
-
+                    @if($items->count() > 0)
+                    <div class="card-footer bg-warning-light">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Total Low Stock Items: {{ $items->total() }}</strong>
                             </div>
-                        </td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                            <div class="col-md-6 text-right">
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle mr-1"></i>
+                                    Consider creating purchase orders for these spare parts
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
         </div>
-
-        @if ($items->hasPages())
-        <div class="border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
-            {{ $items->links() }}
-        </div>
-        @endif
-    </div>
-</div>
+        <!-- /.row -->
+    </div><!-- /.container-fluid -->
+</section>
+<!-- /.content -->
 @endsection
+
+@push('scripts')
+<!-- DataTables & Plugins -->
+<script src="{{ asset('plugins/datatables/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+<script src="{{ asset('plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
+<script src="{{ asset('plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
+
+<script>
+    $(function() {
+        $("#lowStockTable").DataTable({
+            "responsive": true
+            , "lengthChange": false
+            , "autoWidth": false
+            , "paging": false
+            , "searching": true
+            , "ordering": true
+            , "info": false
+            , "language": {
+                "search": "_INPUT_"
+                , "searchPlaceholder": "Search low stock items..."
+                , "emptyTable": "No low stock spare parts found"
+            }
+            , "dom": "<'row'<'col-sm-12 col-md-6'f><'col-sm-12 col-md-6'l>>" +
+                "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>"
+        });
+    });
+
+</script>
+@endpush

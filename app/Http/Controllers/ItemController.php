@@ -8,12 +8,11 @@ use Illuminate\Http\Request;
 
 class ItemController extends Controller
 {
-    public function index()
-    {
-        $items = Item::with('category')->latest()->paginate(10);
-        return view('items.index', compact('items'));
-    }
-
+  public function index()
+{
+    $items = Item::with('category')->latest()->get();
+    return view('items.index', compact('items'));
+}
     public function create()
     {
         $categories = Category::all();
@@ -84,7 +83,13 @@ class ItemController extends Controller
 
     public function lowStock()
     {
-        $items = Item::whereRaw('current_stock <= min_stock')->paginate(10);
+        $items = Item::whereRaw('current_stock <= min_stock')->where('current_stock', '>', 0)->paginate(10);
         return view('items.low-stock', compact('items'));
+    }
+
+    public function outOfStock()
+    {
+        $items = Item::where('current_stock', '<=', 0)->paginate(10);
+        return view('items.out-of-stock', compact('items'));
     }
 }

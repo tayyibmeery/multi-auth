@@ -24,7 +24,8 @@ class ReportController extends Controller
 
 
 
- 
+
+
 
 
     // Add these methods to ReportController
@@ -68,11 +69,7 @@ public function productionReport(Request $request)
     return view('reports.production', compact('productionRuns'));
 }
 
-public function lowStockReport()
-{
-    $items = \App\Models\Item::whereRaw('current_stock <= min_stock')->get();
-    return view('reports.low-stock', compact('items'));
-}
+
 
 public function stockValuation()
 {
@@ -89,4 +86,26 @@ public function stockValuation()
 
     return view('reports.stock-valuation', compact('items', 'products', 'totalItemValue', 'totalProductValue'));
 }
+
+
+ public function salesReport(Request $request)
+    {
+        $startDate = $request->start_date ?? now()->startOfMonth()->format('Y-m-d');
+        $endDate = $request->end_date ?? now()->endOfMonth()->format('Y-m-d');
+
+        $sales = Sale::with(['customer', 'saleItems.product'])
+            ->whereBetween('sale_date', [$startDate, $endDate])
+            ->where('sale_status', 'completed')
+            ->orderBy('sale_date', 'desc')
+            ->get();
+
+        $totalSales = $sales->sum('total_amount');
+        $totalProfit = $sales->sum('profit_margin');
+
+        return view('reports.sales', compact('sales', 'totalSales', 'totalProfit', 'startDate', 'endDate'));
+    }
+
+
+
+
 }

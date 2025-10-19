@@ -1,73 +1,45 @@
 @extends("layouts.app")
 
-@section("title", "")
+@section("title", "Rozwel Control - Complete Business Management Solutions")
 
 @section("styles")
 <style>
     .hero-gradient {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+    }
+
+    .company-gradient {
+        background: linear-gradient(135deg, #0f766e 0%, #0e7490 100%);
     }
 
     .feature-card {
         transition: all 0.3s ease;
-        border: 1px solid rgba(0, 0, 0, 0.05);
+        border: none;
+        border-radius: 15px;
     }
 
     .feature-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
     }
 
-    .login-card {
+    .product-card {
         transition: all 0.3s ease;
-        position: relative;
+        border: none;
+        border-radius: 15px;
         overflow: hidden;
     }
 
-    .login-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, #667eea, #764ba2);
-        transform: scaleX(0);
-        transition: transform 0.3s ease;
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
     }
 
-    .login-card:hover::before {
-        transform: scaleX(1);
-    }
-
-    .login-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 15px 35px rgba(102, 126, 234, 0.2);
-    }
-
-    .stat-number {
-        font-size: 2.5rem;
-        font-weight: 700;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-
-    .pulse-animation {
-        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    }
-
-    @keyframes pulse {
-
-        0%,
-        100% {
-            opacity: 1;
-        }
-
-        50% {
-            opacity: .7;
-        }
+    .stat-card {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
     }
 
     .floating {
@@ -82,350 +54,667 @@
         }
 
         50% {
-            transform: translateY(-10px);
+            transform: translateY(-15px);
         }
     }
 
-    [data-theme="dark"] .bg-white {
-        background-color: var(--card-bg) !important;
+    .pulse {
+        animation: pulse 2s infinite;
     }
 
-    [data-theme="dark"] .text-gray-800 {
-        color: var(--text-primary) !important;
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.05);
+        }
+
+        100% {
+            transform: scale(1);
+        }
     }
 
-    [data-theme="dark"] .text-gray-600 {
-        color: var(--text-secondary) !important;
+    /* Color System */
+    .bg-blue-100 {
+        background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%) !important;
     }
 
-    [data-theme="dark"] .bg-gray-50 {
-        background-color: var(--bg-tertiary) !important;
+    .bg-green-100 {
+        background: linear-gradient(135deg, #dcfce7 0%, #ccfbf1 100%) !important;
     }
 
-    [data-theme="dark"] .bg-blue-50,
-    [data-theme="dark"] .bg-green-50 {
-        background-color: var(--bg-tertiary) !important;
+    .bg-purple-100 {
+        background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%) !important;
     }
 
-    [data-theme="dark"] .feature-card {
-        border-color: var(--border-color);
+    .bg-orange-100 {
+        background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%) !important;
+    }
+
+    .bg-cyan-100 {
+        background: linear-gradient(135deg, #cffafe 0%, #a5f3fc 100%) !important;
+    }
+
+    .bg-emerald-100 {
+        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%) !important;
+    }
+
+    .text-blue-600 {
+        color: #1d4ed8 !important;
+    }
+
+    .text-green-600 {
+        color: #047857 !important;
+    }
+
+    .text-purple-600 {
+        color: #7c3aed !important;
+    }
+
+    .text-orange-600 {
+        color: #ea580c !important;
+    }
+
+    .text-cyan-600 {
+        color: #0e7490 !important;
+    }
+
+    .text-emerald-600 {
+        color: #059669 !important;
+    }
+
+    /* Custom Backgrounds */
+    .bg-light-custom {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+    }
+
+    .bg-dark-custom {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+    }
+
+    /* Pricing Cards */
+    .pricing-card {
+        transition: all 0.3s ease;
+        border: 2px solid #e2e8f0;
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .pricing-card.featured {
+        border-color: #3b82f6;
+        transform: scale(1.05);
+    }
+
+    .pricing-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Company Info Styles */
+    .company-logo {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 1.5rem;
+    }
+
+    .contact-info {
+        background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+        border-radius: 15px;
+        padding: 2rem;
+    }
+
+    /* Product Showcase */
+    .product-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: #ef4444;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: bold;
     }
 
 </style>
 @endsection
 
 @section("content")
-<!-- Hero Section -->
-<section class="hero-gradient relative overflow-hidden py-20">
-    <div class="absolute inset-0 opacity-10">
-        <div class="absolute top-10 left-10 h-64 w-64 rounded-full bg-white blur-3xl"></div>
-        <div class="absolute bottom-10 right-10 h-96 w-96 rounded-full bg-white blur-3xl"></div>
-    </div>
+<div class="content-wrapper" style="min-height: 100vh; margin-left: 0 !important;">
 
-    <div class="container mx-auto px-4 relative z-10">
-        <div class="text-center text-white">
-            <div class="mb-6 floating">
-                <i class="fas fa-warehouse text-7xl drop-shadow-lg"></i>
-            </div>
-            <h1 class="mb-4 text-5xl md:text-6xl font-bold drop-shadow-lg">
-                Inventory Management System
-            </h1>
-            <p class="mb-8 text-xl md:text-2xl font-light max-w-3xl mx-auto">
-                Streamline your operations with intelligent inventory tracking, production management, and real-time analytics
-            </p>
+    <!-- Hero Section -->
+    <section class="hero-gradient py-5" style="min-height: 100vh; display: flex; align-items: center;">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 text-white">
+                    <div class="company-logo floating mb-4">
+                        RC
+                    </div>
+                    <h1 class="display-3 fw-bold mb-4">
+                        Rozwel Control
+                    </h1>
+                    <h2 class="h1 mb-4 opacity-90">
+                        Complete Business Management Solutions
+                    </h2>
+                    <p class="lead mb-5 fs-4 opacity-90">
+                        End-to-end solutions for inventory management, production control, sales automation, and comprehensive accounting systems tailored for modern businesses.
+                    </p>
 
-            <!-- Quick Stats -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mt-12">
-                <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                    <div class="text-3xl font-bold">100%</div>
-                    <div class="text-sm opacity-90">Accuracy</div>
+                    <div class="d-flex flex-wrap gap-3">
+                        <a href="#contact" class="btn btn-light btn-lg px-5 py-3 fw-bold fs-5 pulse">
+                            <i class="fas fa-phone me-2"></i>Contact Us
+                        </a>
+                        <a href="#products" class="btn btn-outline-light btn-lg px-5 py-3 fw-bold fs-5">
+                            <i class="fas fa-box me-2"></i>Our Products
+                        </a>
+                    </div>
                 </div>
-                <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                    <div class="text-3xl font-bold">24/7</div>
-                    <div class="text-sm opacity-90">Access</div>
-                </div>
-                <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                    <div class="text-3xl font-bold">Real-time</div>
-                    <div class="text-sm opacity-90">Tracking</div>
-                </div>
-                <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                    <div class="text-3xl font-bold">Secure</div>
-                    <div class="text-sm opacity-90">Platform</div>
+                <div class="col-lg-6">
+                    <div class="text-center">
+                        <div class="floating">
+                            <i class="fas fa-chart-network text-white display-1 mb-4"></i>
+                        </div>
+                        <!-- Stats Grid -->
+                        <div class="row g-3 mt-4">
+                            <div class="col-6">
+                                <div class="stat-card p-4 text-center text-white">
+                                    <div class="display-6 fw-bold mb-2">100%</div>
+                                    <div class="fs-6 opacity-90">Accuracy</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="stat-card p-4 text-center text-white">
+                                    <div class="display-6 fw-bold mb-2">24/7</div>
+                                    <div class="fs-6 opacity-90">Support</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="stat-card p-4 text-center text-white">
+                                    <div class="display-6 fw-bold mb-2">Real-time</div>
+                                    <div class="fs-6 opacity-90">Tracking</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="stat-card p-4 text-center text-white">
+                                    <div class="display-6 fw-bold mb-2">Secure</div>
+                                    <div class="fs-6 opacity-90">Platform</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- Login Section -->
-<section class="py-16 bg-gray-50">
-    <div class="container mx-auto px-4">
-        <div class="max-w-3xl mx-auto">
-            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-800">
-                Get Started Today
-            </h2>
-            <p class="text-center text-gray-600 mb-12 text-lg">
-                Login to access your inventory management dashboard
-            </p>
-
-            <!-- Single Login Card -->
-            <div class="login-card bg-white rounded-2xl p-8 md:p-12 shadow-lg max-w-xl mx-auto">
-                <div class="text-center mb-6">
-                    <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 mb-4">
-                        <i class="fas fa-sign-in-alt text-4xl text-blue-600"></i>
-                    </div>
-                    <h3 class="text-3xl font-bold text-gray-800 mb-2">System Login</h3>
-                    <p class="text-gray-600 mb-6">Access your inventory management dashboard</p>
-
-                    <div class="grid md:grid-cols-2 gap-4 mb-8 text-left">
-                        <div>
-                            <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
-                                <i class="fas fa-user-shield text-blue-500 mr-2"></i>
-                                Admin Features
-                            </h4>
-                            <ul class="space-y-2 text-sm">
-                                <li class="flex spare partss-start text-gray-700">
-                                    <i class="fas fa-check-circle text-blue-500 mr-2 mt-0.5"></i>
-                                    <span>Manage users & permissions</span>
-                                </li>
-                                <li class="flex spare partss-start text-gray-700">
-                                    <i class="fas fa-check-circle text-blue-500 mr-2 mt-0.5"></i>
-                                    <span>Configure system settings</span>
-                                </li>
-                                <li class="flex spare partss-start text-gray-700">
-                                    <i class="fas fa-check-circle text-blue-500 mr-2 mt-0.5"></i>
-                                    <span>Vendor & category management</span>
-                                </li>
-                            </ul>
+    <!-- Company Information Section -->
+    <section class="py-5 bg-white">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h2 class="display-5 fw-bold text-dark mb-4">About Rozwel Control</h2>
+                    <p class="lead text-muted mb-4">
+                        Rozwel Control is a leading provider of comprehensive business management solutions, specializing in custom software development for inventory control, production management, and enterprise resource planning.
+                    </p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start mb-4">
+                                <div class="flex-shrink-0">
+                                    <div class="bg-primary text-white rounded-circle p-3">
+                                        <i class="fas fa-bullseye fs-5"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h5 class="fw-bold text-dark">Our Mission</h5>
+                                    <p class="text-muted mb-0">To empower businesses with innovative technology solutions that drive efficiency and growth.</p>
+                                </div>
+                            </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start mb-4">
+                                <div class="flex-shrink-0">
+                                    <div class="bg-success text-white rounded-circle p-3">
+                                        <i class="fas fa-eye fs-5"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h5 class="fw-bold text-dark">Our Vision</h5>
+                                    <p class="text-muted mb-0">To be the preferred partner for business automation and digital transformation.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="contact-info">
+                        <h4 class="fw-bold text-dark mb-4">Company Information</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <h6 class="fw-bold text-primary mb-2">
+                                        <i class="fas fa-building me-2"></i>Company Name
+                                    </h6>
+                                    <p class="text-muted mb-0">Rozwel Control Pvt. Ltd.</p>
+                                </div>
+                                <div class="mb-3">
+                                    <h6 class="fw-bold text-primary mb-2">
+                                        <i class="fas fa-map-marker-alt me-2"></i>Address
+                                    </h6>
+                                    <p class="text-muted mb-0">123 Business District<br>Industrial Area<br>City, State 12345</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <h6 class="fw-bold text-primary mb-2">
+                                        <i class="fas fa-phone me-2"></i>Contact
+                                    </h6>
+                                    <p class="text-muted mb-0">+1 (555) 123-4567<br>+1 (555) 123-4568</p>
+                                </div>
+                                <div class="mb-3">
+                                    <h6 class="fw-bold text-primary mb-2">
+                                        <i class="fas fa-envelope me-2"></i>Email
+                                    </h6>
+                                    <p class="text-muted mb-0">info@rozwelcontrol.com<br>support@rozwelcontrol.com</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                        <div>
-                            <h4 class="font-semibold text-gray-800 mb-3 flex spare partss-center">
-                                <i class="fas fa-user text-green-500 mr-2"></i>
-                                User Features
-                            </h4>
-                            <ul class="space-y-2 text-sm">
-                                <li class="flex spare partss-start text-gray-700">
-                                    <i class="fas fa-check-circle text-green-500 mr-2 mt-0.5"></i>
-                                    <span>Manage inventory spare partss</span>
-                                </li>
-                                <li class="flex spare partss-start text-gray-700">
-                                    <i class="fas fa-check-circle text-green-500 mr-2 mt-0.5"></i>
-                                    <span>Process purchases</span>
-                                </li>
-                                <li class="flex spare partss-start text-gray-700">
-                                    <i class="fas fa-check-circle text-green-500 mr-2 mt-0.5"></i>
-                                    <span>Track production runs</span>
-                                </li>
+    <!-- Products & Services Section -->
+    <section id="products" class="py-5 bg-light-custom">
+        <div class="container">
+            <div class="row justify-content-center mb-5">
+                <div class="col-12 text-center">
+                    <h2 class="display-4 fw-bold text-dark mb-3">Our Products & Services</h2>
+                    <p class="lead text-muted mx-auto" style="max-width: 600px;">
+                        Comprehensive business management solutions tailored to your specific needs
+                    </p>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Product 1 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="product-card card h-100 border-0 shadow-sm">
+                        <div class="card-body p-4 text-center">
+                            <div class="d-inline-flex align-items-center justify-content-center rounded-circle p-4 bg-blue-100 mb-4">
+                                <i class="fas fa-boxes fs-1 text-blue-600"></i>
+                            </div>
+                            <h4 class="fw-bold text-dark mb-3">Inventory Management System</h4>
+                            <p class="text-muted mb-4">
+                                Complete inventory tracking with real-time stock updates, automated reordering, and comprehensive reporting.
+                            </p>
+                            <div class="mb-3">
+                                <span class="h3 fw-bold text-primary">$499</span>
+                                <span class="text-muted">/month</span>
+                            </div>
+                            <ul class="list-unstyled text-start text-muted mb-4">
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Real-time stock tracking</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Automated purchase orders</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Low stock alerts</li>
+                                <li><i class="fas fa-check text-success me-2"></i> Vendor management</li>
                             </ul>
+                            <a href="#contact" class="btn btn-primary w-100 py-2">Get Started</a>
                         </div>
                     </div>
                 </div>
 
-                <a href="{{ route('login') }}" class="block w-full text-center rounded-lg bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 px-6 py-4 font-semibold text-white text-lg hover:from-blue-700 hover:via-purple-700 hover:to-blue-800 transition-all shadow-md hover:shadow-xl transform hover:scale-105">
-                    <i class="fas fa-sign-in-alt mr-2"></i>
-                    Login to Dashboard
+                <!-- Product 2 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="product-card card h-100 border-0 shadow-sm position-relative">
+                        <div class="product-badge">Most Popular</div>
+                        <div class="card-body p-4 text-center">
+                            <div class="d-inline-flex align-items-center justify-content-center rounded-circle p-4 bg-green-100 mb-4">
+                                <i class="fas fa-industry fs-1 text-green-600"></i>
+                            </div>
+                            <h4 class="fw-bold text-dark mb-3">Production Control Suite</h4>
+                            <p class="text-muted mb-4">
+                                End-to-end production management with BOM tracking, quality control, and cost analysis.
+                            </p>
+                            <div class="mb-3">
+                                <span class="h3 fw-bold text-primary">$799</span>
+                                <span class="text-muted">/month</span>
+                            </div>
+                            <ul class="list-unstyled text-start text-muted mb-4">
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i> BOM management</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Production scheduling</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Quality control tracking</li>
+                                <li><i class="fas fa-check text-success me-2"></i> Cost analysis reports</li>
+                            </ul>
+                            <a href="#contact" class="btn btn-success w-100 py-2">Get Started</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 3 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="product-card card h-100 border-0 shadow-sm">
+                        <div class="card-body p-4 text-center">
+                            <div class="d-inline-flex align-items-center justify-content-center rounded-circle p-4 bg-purple-100 mb-4">
+                                <i class="fas fa-cash-register fs-1 text-purple-600"></i>
+                            </div>
+                            <h4 class="fw-bold text-dark mb-3">Sales & POS System</h4>
+                            <p class="text-muted mb-4">
+                                Complete point of sale with customer management, invoicing, and sales analytics.
+                            </p>
+                            <div class="mb-3">
+                                <span class="h3 fw-bold text-primary">$599</span>
+                                <span class="text-muted">/month</span>
+                            </div>
+                            <ul class="list-unstyled text-start text-muted mb-4">
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Point of Sale</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Customer management</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Invoice generation</li>
+                                <li><i class="fas fa-check text-success me-2"></i> Sales analytics</li>
+                            </ul>
+                            <a href="#contact" class="btn btn-primary w-100 py-2">Get Started</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 4 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="product-card card h-100 border-0 shadow-sm">
+                        <div class="card-body p-4 text-center">
+                            <div class="d-inline-flex align-items-center justify-content-center rounded-circle p-4 bg-orange-100 mb-4">
+                                <i class="fas fa-chart-line fs-1 text-orange-600"></i>
+                            </div>
+                            <h4 class="fw-bold text-dark mb-3">Accounting System</h4>
+                            <p class="text-muted mb-4">
+                                Complete double-entry accounting with financial reporting and expense tracking.
+                            </p>
+                            <div class="mb-3">
+                                <span class="h3 fw-bold text-primary">$699</span>
+                                <span class="text-muted">/month</span>
+                            </div>
+                            <ul class="list-unstyled text-start text-muted mb-4">
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Double-entry accounting</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Financial reports</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Expense management</li>
+                                <li><i class="fas fa-check text-success me-2"></i> Payroll system</li>
+                            </ul>
+                            <a href="#contact" class="btn btn-primary w-100 py-2">Get Started</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 5 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="product-card card h-100 border-0 shadow-sm">
+                        <div class="card-body p-4 text-center">
+                            <div class="d-inline-flex align-items-center justify-content-center rounded-circle p-4 bg-cyan-100 mb-4">
+                                <i class="fas fa-mobile-alt fs-1 text-cyan-600"></i>
+                            </div>
+                            <h4 class="fw-bold text-dark mb-3">Mobile Business App</h4>
+                            <p class="text-muted mb-4">
+                                Mobile application for on-the-go business management and real-time notifications.
+                            </p>
+                            <div class="mb-3">
+                                <span class="h3 fw-bold text-primary">$299</span>
+                                <span class="text-muted">/month</span>
+                            </div>
+                            <ul class="list-unstyled text-start text-muted mb-4">
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Mobile dashboard</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Real-time alerts</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Sales on mobile</li>
+                                <li><i class="fas fa-check text-success me-2"></i> Inventory checks</li>
+                            </ul>
+                            <a href="#contact" class="btn btn-primary w-100 py-2">Get Started</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 6 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="product-card card h-100 border-0 shadow-sm">
+                        <div class="card-body p-4 text-center">
+                            <div class="d-inline-flex align-items-center justify-content-center rounded-circle p-4 bg-emerald-100 mb-4">
+                                <i class="fas fa-star fs-1 text-emerald-600"></i>
+                            </div>
+                            <h4 class="fw-bold text-dark mb-3">Complete Enterprise Suite</h4>
+                            <p class="text-muted mb-4">
+                                All-in-one solution combining all modules for complete business management.
+                            </p>
+                            <div class="mb-3">
+                                <span class="h3 fw-bold text-primary">$1,999</span>
+                                <span class="text-muted">/month</span>
+                            </div>
+                            <ul class="list-unstyled text-start text-muted mb-4">
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i> All modules included</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Priority support</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Custom development</li>
+                                <li><i class="fas fa-check text-success me-2"></i> Training & onboarding</li>
+                            </ul>
+                            <a href="#contact" class="btn btn-success w-100 py-2">Get Started</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-5 bg-white">
+        <div class="container">
+            <div class="row justify-content-center mb-5">
+                <div class="col-12 text-center">
+                    <h2 class="display-4 fw-bold text-dark mb-3">Why Choose Rozwel Control?</h2>
+                    <p class="lead text-muted mx-auto" style="max-width: 600px;">
+                        Experience the difference with our comprehensive business solutions
+                    </p>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card card h-100 border-0 text-center p-4">
+                        <div class="card-body">
+                            <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary text-white p-4 mb-4">
+                                <i class="fas fa-rocket fs-2"></i>
+                            </div>
+                            <h5 class="fw-bold text-dark mb-3">Fast Implementation</h5>
+                            <p class="text-muted">Get your system up and running in days, not months with our streamlined implementation process.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card card h-100 border-0 text-center p-4">
+                        <div class="card-body">
+                            <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success text-white p-4 mb-4">
+                                <i class="fas fa-shield-alt fs-2"></i>
+                            </div>
+                            <h5 class="fw-bold text-dark mb-3">Enterprise Security</h5>
+                            <p class="text-muted">Bank-level security with encryption, regular backups, and compliance with industry standards.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card card h-100 border-0 text-center p-4">
+                        <div class="card-body">
+                            <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-warning text-white p-4 mb-4">
+                                <i class="fas fa-headset fs-2"></i>
+                            </div>
+                            <h5 class="fw-bold text-dark mb-3">24/7 Support</h5>
+                            <p class="text-muted">Round-the-clock customer support with dedicated account managers and technical experts.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card card h-100 border-0 text-center p-4">
+                        <div class="card-body">
+                            <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-info text-white p-4 mb-4">
+                                <i class="fas fa-sync-alt fs-2"></i>
+                            </div>
+                            <h5 class="fw-bold text-dark mb-3">Continuous Updates</h5>
+                            <p class="text-muted">Regular feature updates and improvements based on customer feedback and industry trends.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-5 company-gradient text-white">
+        <div class="container">
+            <div class="row justify-content-center mb-5">
+                <div class="col-12 text-center">
+                    <h2 class="display-4 fw-bold mb-3">Get In Touch</h2>
+                    <p class="lead opacity-90 mx-auto" style="max-width: 600px;">
+                        Ready to transform your business? Contact us today for a free consultation and demo.
+                    </p>
+                </div>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-lg">
+                        <div class="card-body p-5">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h4 class="fw-bold text-dark mb-4">Contact Information</h4>
+                                    <div class="mb-4">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="bg-primary text-white rounded-circle p-3 me-3">
+                                                <i class="fas fa-map-marker-alt"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="fw-bold text-dark mb-1">Address</h6>
+                                                <p class="text-muted mb-0">123 Business District, Industrial Area</p>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="bg-success text-white rounded-circle p-3 me-3">
+                                                <i class="fas fa-phone"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="fw-bold text-dark mb-1">Phone</h6>
+                                                <p class="text-muted mb-0">+1 (555) 123-4567</p>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-warning text-white rounded-circle p-3 me-3">
+                                                <i class="fas fa-envelope"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="fw-bold text-dark mb-1">Email</h6>
+                                                <p class="text-muted mb-0">info@rozwelcontrol.com</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h4 class="fw-bold text-dark mb-4">Send us a Message</h4>
+                                    <form>
+                                        <div class="mb-3">
+                                            <input type="text" class="form-control form-control-lg" placeholder="Your Name" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <input type="email" class="form-control form-control-lg" placeholder="Your Email" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <input type="tel" class="form-control form-control-lg" placeholder="Your Phone">
+                                        </div>
+                                        <div class="mb-3">
+                                            <textarea class="form-control form-control-lg" rows="3" placeholder="Your Message" required></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-lg w-100 py-3">
+                                            <i class="fas fa-paper-plane me-2"></i>Send Message
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA Section -->
+    <section class="py-5 bg-dark-custom text-white">
+        <div class="container text-center">
+            <h2 class="display-5 fw-bold mb-4">Ready to Get Started?</h2>
+            <p class="fs-4 mb-4 opacity-90 mx-auto" style="max-width: 600px;">
+                Join hundreds of businesses that trust Rozwel Control for their business management needs
+            </p>
+            <div class="d-flex flex-wrap justify-content-center gap-3">
+                <a href="#contact" class="btn btn-light btn-lg px-5 py-3 fw-bold fs-5">
+                    <i class="fas fa-calendar-check me-2"></i>Schedule Demo
                 </a>
-
-                <p class="text-center text-gray-500 text-sm mt-4">
-                    <i class="fas fa-info-circle mr-1"></i>
-                    All users login through the same portal
-                </p>
+                <a href="tel:+15551234567" class="btn btn-outline-light btn-lg px-5 py-3 fw-bold fs-5">
+                    <i class="fas fa-phone me-2"></i>Call Now
+                </a>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+</div>
+@endsection
 
-<!-- Features Section -->
-<section class="py-16 bg-white">
-    <div class="container mx-auto px-4">
-        <div class="text-center mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
-                Powerful Features for Complete Control
-            </h2>
-            <p class="text-gray-600 text-lg max-w-2xl mx-auto">
-                Everything you need to manage your inventory efficiently and effectively
-            </p>
-        </div>
+@section('scripts')
+<script>
+    $(document).ready(function() {
+        console.log('Rozwel Control landing page loaded');
 
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-            <!-- Feature 1 -->
-            <div class="feature-card bg-white rounded-xl p-6 shadow-md">
-                <div class="inline-flex spare partss-center justify-center w-14 h-14 rounded-full bg-blue-100 mb-4">
-                    <i class="fas fa-boxes text-2xl text-blue-600"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Inventory Tracking</h3>
-                <p class="text-gray-600">
-                    Real-time tracking of all inventory Spare Parts with detailed stock levels, locations, and movement history
+        // Smooth scrolling for navigation links
+        $('a[href^="#"]').on('click', function(e) {
+            e.preventDefault();
+            const target = $(this.getAttribute('href'));
+            if (target.length) {
+                $('html, body').animate({
+                    scrollTop: target.offset().top - 100
+                }, 1000);
+            }
+        });
 
-                </p>
-            </div>
+        // Add hover effects
+        $('.feature-card, .product-card').hover(
+            function() {
+                $(this).addClass('shadow-lg');
+            }
+            , function() {
+                $(this).removeClass('shadow-lg');
+            }
+        );
 
-            <!-- Feature 2 -->
-            <div class="feature-card bg-white rounded-xl p-6 shadow-md">
-                <div class="inline-flex spare partss-center justify-center w-14 h-14 rounded-full bg-green-100 mb-4">
-                    <i class="fas fa-industry text-2xl text-green-600"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Production Management</h3>
-                <p class="text-gray-600">
-                    Manage Bill of Materials (BOM), track production runs, and monitor manufacturing processes seamlessly
-                </p>
-            </div>
+        // Animation on scroll
+        function animateOnScroll() {
+            $('.feature-card, .product-card').each(function() {
+                const elementTop = $(this).offset().top;
+                const elementBottom = elementTop + $(this).outerHeight();
+                const viewportTop = $(window).scrollTop();
+                const viewportBottom = viewportTop + $(window).height();
 
-            <!-- Feature 3 -->
-            <div class="feature-card bg-white rounded-xl p-6 shadow-md">
-                <div class="inline-flex spare partss-center justify-center w-14 h-14 rounded-full bg-purple-100 mb-4">
-                    <i class="fas fa-shopping-cart text-2xl text-purple-600"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Purchase Orders</h3>
-                <p class="text-gray-600">
-                    Create and manage purchase orders, track vendor information, and streamline procurement workflows
-                </p>
-            </div>
+                if (elementBottom > viewportTop && elementTop < viewportBottom) {
+                    $(this).addClass('animate__animated animate__fadeInUp');
+                }
+            });
+        }
 
-            <!-- Feature 4 -->
-            <div class="feature-card bg-white rounded-xl p-6 shadow-md">
-                <div class="inline-flex spare partss-center justify-center w-14 h-14 rounded-full bg-yellow-100 mb-4">
-                    <i class="fas fa-chart-line text-2xl text-yellow-600"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Analytics & Reports</h3>
-                <p class="text-gray-600">
-                    Comprehensive reporting with stock valuation, low stock alerts, and detailed transaction histories
-                </p>
-            </div>
+        // Initial check
+        animateOnScroll();
 
-            <!-- Feature 5 -->
-            <div class="feature-card bg-white rounded-xl p-6 shadow-md">
-                <div class="inline-flex spare partss-center justify-center w-14 h-14 rounded-full bg-red-100 mb-4">
-                    <i class="fas fa-exclamation-triangle text-2xl text-red-600"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Low Stock Alerts</h3>
-                <p class="text-gray-600">
-                    Automatic notifications when inventory levels fall below reorder points to prevent stockouts
-                </p>
-            </div>
+        // Check on scroll
+        $(window).on('scroll', function() {
+            animateOnScroll();
+        });
+    });
 
-            <!-- Feature 6 -->
-            <div class="feature-card bg-white rounded-xl p-6 shadow-md">
-                <div class="inline-flex spare partss-center justify-center w-14 h-14 rounded-full bg-indigo-100 mb-4">
-                    <i class="fas fa-history text-2xl text-indigo-600"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Stock Ledger</h3>
-                <p class="text-gray-600">
-                    Complete audit trail of all stock movements with date, time, quantity, and transaction details
-                </p>
-            </div>
-
-            <!-- Feature 7 -->
-            <div class="feature-card bg-white rounded-xl p-6 shadow-md">
-                <div class="inline-flex spare partss-center justify-center w-14 h-14 rounded-full bg-pink-100 mb-4">
-                    <i class="fas fa-tags text-2xl text-pink-600"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Category Management</h3>
-                <p class="text-gray-600">
-                    Organize inventory with custom categories and subcategories for easy navigation and reporting
-                </p>
-            </div>
-
-            <!-- Feature 8 -->
-            <div class="feature-card bg-white rounded-xl p-6 shadow-md">
-                <div class="inline-flex spare partss-center justify-center w-14 h-14 rounded-full bg-teal-100 mb-4">
-                    <i class="fas fa-truck text-2xl text-teal-600"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Vendor Management</h3>
-                <p class="text-gray-600">
-                    Maintain vendor database with contact information, pricing, and purchase history for better relationships
-                </p>
-            </div>
-
-            <!-- Feature 9 -->
-            <div class="feature-card bg-white rounded-xl p-6 shadow-md">
-                <div class="inline-flex spare partss-center justify-center w-14 h-14 rounded-full bg-orange-100 mb-4">
-                    <i class="fas fa-cube text-2xl text-orange-600"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Product Assembly</h3>
-                <p class="text-gray-600">
-                    Create finished products from raw materials using BOM specifications with automated inventory adjustments
-                </p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Benefits Section -->
-<section class="py-16 bg-gradient-to-br from-gray-50 to-gray-100">
-    <div class="container mx-auto px-4">
-        <div class="max-w-6xl mx-auto">
-            <h2 class="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-12">
-                Why Choose Our Inventory System?
-            </h2>
-
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="flex items-start space-x-4">
-                    <div class="flex-shrink-0">
-                        <div class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500 text-white">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">Save Time</h3>
-                        <p class="text-gray-600">Automate manual processes and reduce data entry with streamlined workflows</p>
-                    </div>
-                </div>
-
-                <div class="flex items-start space-x-4">
-                    <div class="flex-shrink-0">
-                        <div class="flex items-center justify-center w-12 h-12 rounded-full bg-green-500 text-white">
-                            <i class="fas fa-dollar-sign"></i>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">Reduce Costs</h3>
-                        <p class="text-gray-600">Minimize waste, prevent stockouts, and optimize inventory investment</p>
-                    </div>
-                </div>
-
-                <div class="flex items-start space-x-4">
-                    <div class="flex-shrink-0">
-                        <div class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500 text-white">
-                            <i class="fas fa-chart-bar"></i>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">Better Insights</h3>
-                        <p class="text-gray-600">Make data-driven decisions with comprehensive analytics and reporting</p>
-                    </div>
-                </div>
-
-                <div class="flex items-start space-x-4">
-                    <div class="flex-shrink-0">
-                        <div class="flex items-center justify-center w-12 h-12 rounded-full bg-red-500 text-white">
-                            <i class="fas fa-shield-alt"></i>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">Secure & Reliable</h3>
-                        <p class="text-gray-600">Enterprise-grade security with role-based access control and audit trails</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- CTA Section -->
-<section class="py-16 hero-gradient text-white">
-    <div class="container mx-auto px-4 text-center">
-        <h2 class="text-3xl md:text-4xl font-bold mb-4">
-            Ready to Streamline Your Inventory?
-        </h2>
-        <p class="text-xl mb-8 max-w-2xl mx-auto">
-            Join businesses that trust our system to manage their inventory efficiently
-        </p>
-        <a href="{{ route('login') }}" class="inline-block bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-all shadow-lg transform hover:scale-105">
-            <i class="fas fa-rocket mr-2"></i>
-            Get Started Now
-        </a>
-    </div>
-</section>
+</script>
 @endsection

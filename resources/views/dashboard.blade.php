@@ -3,194 +3,563 @@
 @section("title", "Dashboard")
 
 @section("content")
-<div class="space-y-6">
-    <!-- Page Header -->
-    <div class="rounded-lg bg-white p-6 shadow">
-        <div class="flex items-center justify-between">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
-                <p class="text-gray-600">Welcome back, {{ auth()->user()->name }}!</p>
-            </div>
-            <div class="text-right">
-                <p class="text-sm text-gray-500">Today is</p>
-                <p class="text-lg font-semibold">{{ now()->format("l, F j, Y") }}</p>
-            </div>
-        </div>
-    </div>
+<!-- Content Wrapper. Contains page content -->
 
-    <!-- Stats Grid -->
-    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <div class="rounded-lg bg-white p-6 shadow">
-            <div class="flex items-center">
-                <div class="rounded-lg bg-blue-100 p-3">
-                    <i class="fas fa-boxes text-xl text-blue-600"></i>
-                </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600">Total Spare Parts</p>
+<!-- /.content-header -->
 
-                    <p class="text-2xl font-semibold text-gray-900">{{ $stats["total_items"] }}</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="rounded-lg bg-white p-6 shadow">
-            <div class="flex items-center">
-                <div class="rounded-lg bg-green-100 p-3">
-                    <i class="fas fa-cube text-xl text-green-600"></i>
-                </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600">Total Products</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $stats["total_products"] }}</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="rounded-lg bg-white p-6 shadow">
-            <div class="flex items-center">
-                <div class="rounded-lg bg-purple-100 p-3">
-                    <i class="fas fa-shopping-cart text-xl text-purple-600"></i>
-                </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600">Total Purchases</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $stats["total_purchases"] }}</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="rounded-lg bg-white p-6 shadow">
-            <div class="flex items-center">
-                <div class="rounded-lg bg-orange-100 p-3">
-                    <i class="fas fa-industry text-xl text-orange-600"></i>
-                </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600">Production Runs</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $stats["total_production_runs"] }}</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Stock Value -->
-    <div class="rounded-lg bg-white p-6 shadow">
-        <div class="mb-4 flex items-center justify-between">
-            <h2 class="text-lg font-semibold text-gray-900">Stock Valuation</h2>
-            <span class="text-2xl font-bold text-green-600">Rs {{ number_format($totalStockValue, 2) }}</span>
-        </div>
-        <p class="text-sm text-gray-600">Total value of all Spare Parts and products in stock</p>
-
-    </div>
-
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <!-- Low Stock Items -->
-        <div class="rounded-lg bg-white p-6 shadow">
-            <h2 class="mb-4 text-lg font-semibold text-gray-900">Low Stock Spare Parts </h2>
-
-            @if ($lowStockItems->count() > 0)
-            <div class="space-y-3">
-                @foreach ($lowStockItems as $item)
-                <div class="flex items-center justify-between rounded-lg bg-red-50 p-3">
-                    <div>
-                        <p class="font-medium text-gray-900">{{ $item->name }}</p>
-                        <p class="text-sm text-gray-600">Stock: {{ $item->current_stock }} {{ $item->unit }}
-                        </p>
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <!-- Small boxes (Stat box) -->
+        <div class="row">
+            <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>{{ $stats["total_items"] }}</h3>
+                        <p>Total Spare Parts</p>
                     </div>
-                    <span class="rounded bg-red-100 px-2 py-1 text-xs font-medium text-red-800">Low Stock</span>
-                </div>
-                @endforeach
-            </div>
-            @else
-            <p class="py-4 text-center text-gray-500">All Spare Parts are sufficiently stocked</p>
-
-            @endif
-            <div class="mt-4">
-                <a href="{{ route("items.low-stock") }}" class="text-sm font-medium text-blue-600 hover:text-blue-500">
-                    View all low stock Spare Parts →
-
-                </a>
-            </div>
-        </div>
-
-        <!-- Recent Purchases -->
-        <div class="rounded-lg bg-white p-6 shadow">
-            <h2 class="mb-4 text-lg font-semibold text-gray-900">Recent Purchases</h2>
-            @if ($recentPurchases->count() > 0)
-            <div class="space-y-3">
-                @foreach ($recentPurchases as $purchase)
-                <div class="flex items-center justify-between rounded-lg bg-gray-50 p-3">
-                    <div>
-                        <p class="font-medium text-gray-900">{{ $purchase->purchase_number }}</p>
-                        <p class="text-sm text-gray-600">{{ $purchase->vendor->name }} • Rs
-                            {{ number_format($purchase->total_amount, 2) }}</p>
+                    <div class="icon">
+                        <i class="fas fa-boxes"></i>
                     </div>
-                    <span class="text-xs text-gray-500">{{ $purchase->purchase_date->format("M j") }}</span>
+                    <a href="{{ route('items.index') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
-                @endforeach
             </div>
-            @else
-            <p class="py-4 text-center text-gray-500">No recent purchases</p>
-            @endif
-            <div class="mt-4">
-                <a href="{{ route("purchases.index") }}" class="text-sm font-medium text-blue-600 hover:text-blue-500">
-                    View all purchases →
-                </a>
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>{{ $stats["total_products"] }}</h3>
+                        <p>Total Products</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-cube"></i>
+                    </div>
+                    <a href="{{ route('products.index') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
             </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3>{{ $stats["total_purchases"] }}</h3>
+                        <p>Total Purchases</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <a href="{{ route('purchases.index') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        <h3>{{ $stats["total_sales"] }}</h3>
+                        <p>Total Sales</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-cash-register"></i>
+                    </div>
+                    <a href="{{ route('sales.index') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <!-- ./col -->
         </div>
-    </div>
+        <!-- /.row -->
 
-    <!-- Recent Production -->
-    <div class="rounded-lg bg-white p-6 shadow">
-        <h2 class="mb-4 text-lg font-semibold text-gray-900">Recent Production Runs</h2>
-        @if ($recentProductions->count() > 0)
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">Batch No</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">Product</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">Quantity</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">Status</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">Date</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200 bg-white">
-                    @foreach ($recentProductions as $production)
-                    <tr>
-                        <td class="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
-                            {{ $production->batch_number }}
-                        </td>
-                        <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
-                            {{ $production->billOfMaterial->product->name }}
-                        </td>
-                        <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
-                            {{ $production->actual_quantity ?? $production->quantity_to_produce }}
-                        </td>
-                        <td class="whitespace-nowrap px-6 py-4">
-                            @if ($production->status === "completed")
-                            <span class="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
-                                Completed
-                            </span>
-                            @else
-                            <span class="inline-flex rounded-full bg-yellow-100 px-2 text-xs font-semibold leading-5 text-yellow-800">
-                                {{ ucfirst($production->status) }}
-                            </span>
-                            @endif
-                        </td>
-                        <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                            {{ $production->production_date->format("M j, Y") }}
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+        <!-- Second Row Stats -->
+        <div class="row">
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-secondary">
+                    <div class="inner">
+                        <h3>Rs {{ number_format($totalStockValue, 2) }}</h3>
+                        <p>Total Stock Value</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <a href="{{ route('reports.stock-valuation') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-primary">
+                    <div class="inner">
+                        <h3>{{ $stats["total_production_runs"] }}</h3>
+                        <p>Production Runs</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-industry"></i>
+                    </div>
+                    <a href="{{ route('production-runs.index') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-dark">
+                    <div class="inner">
+                        <h3>{{ $stats["total_customers"] }}</h3>
+                        <p>Total Customers</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <a href="{{ route('customers.index') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-gradient-indigo">
+                    <div class="inner">
+                        <h3>Rs {{ number_format($stats["total_expenses"], 2) }}</h3>
+                        <p>Total Expenses</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <a href="{{ route('expenses.index') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <!-- ./col -->
         </div>
-        @else
-        <p class="py-4 text-center text-gray-500">No recent production runs</p>
-        @endif
-        <div class="mt-4">
-            <a href="{{ route("production-runs.index") }}" class="text-sm font-medium text-blue-600 hover:text-blue-500">
-                View all production runs →
-            </a>
+        <!-- /.row -->
+
+        <!-- Third Row Stats -->
+        <div class="row">
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-gradient-teal">
+                    <div class="inner">
+                        <h3>Rs {{ number_format($stats["total_revenue"] ?? 0, 2) }}</h3>
+                        <p>Total Revenue</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <a href="{{ route('reports.sales') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-gradient-orange">
+                    <div class="inner">
+                        <h3>Rs {{ number_format(($stats["total_revenue"] ?? 0) - ($stats["total_expenses"] ?? 0), 2) }}</h3>
+                        <p>Net Profit</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-hand-holding-usd"></i>
+                    </div>
+                    <a href="{{ route('accounting.dashboard') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-gradient-purple">
+                    <div class="inner">
+                        <h3>{{ $stats["total_vendors"] ?? 0 }}</h3>
+                        <p>Total Vendors</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <a href="{{ route('vendors.index') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-gradient-maroon">
+                    <div class="inner">
+                        <h3>{{ $stats["total_employees"] ?? 0 }}</h3>
+                        <p>Total Employees</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <a href="{{ route('employees.index') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <!-- ./col -->
         </div>
-    </div>
-</div>
+        <!-- /.row -->
+
+        <!-- Main row -->
+        <div class="row">
+            <!-- Left col -->
+            <section class="col-lg-7 connectedSortable">
+                <!-- Recent Sales -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-chart-line mr-1"></i>
+                            Recent Sales
+                        </h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        @if($recentSales->count() > 0)
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Invoice No</th>
+                                        <th>Customer</th>
+                                        <th>Amount</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($recentSales as $sale)
+                                    <tr>
+                                        <td>{{ $sale->invoice_number }}</td>
+                                        <td>{{ $sale->customer->name }}</td>
+                                        <td>Rs {{ number_format($sale->total_amount, 2) }}</td>
+                                        <td>{{ $sale->created_at->format('M j, Y') }}</td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        @else
+                        <p class="text-center text-muted py-3">No recent sales</p>
+                        @endif
+                    </div>
+                    <!-- /.card-body -->
+                    <div class="card-footer text-center">
+                        <a href="{{ route('sales.index') }}" class="btn btn-sm btn-default">
+                            View All Sales
+                        </a>
+                    </div>
+                </div>
+                <!-- /.card -->
+
+                <!-- Low Stock Alert -->
+                <div class="card card-danger">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-exclamation-triangle mr-1"></i>
+                            Low Stock Spare Parts
+                        </h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        @if($lowStockItems->count() > 0)
+                        <div class="list-group">
+                            @foreach($lowStockItems as $item)
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">{{ $item->name }}</h6>
+                                        <small class="text-muted">Stock: {{ $item->current_stock }} {{ $item->unit }}</small>
+                                    </div>
+                                    <span class="badge badge-danger">Low Stock</span>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                        @else
+                        <p class="text-center text-muted py-3">All Spare Parts are sufficiently stocked</p>
+                        @endif
+                    </div>
+                    <!-- /.card-body -->
+                    <div class="card-footer text-center">
+                        <a href="{{ route('items.low-stock') }}" class="btn btn-sm btn-default">
+                            View All Low Stock Items
+                        </a>
+                    </div>
+                </div>
+                <!-- /.card -->
+
+                <!-- Inventory Health -->
+                <div class="card card-warning">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-heartbeat mr-1"></i>
+                            Inventory Health
+                        </h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        @php
+                        $totalItems = $stats["total_items"] ?? 1;
+                        $healthyCount = $totalItems - count($lowStockItems);
+                        $healthyPercentage = ($healthyCount / $totalItems) * 100;
+                        $lowStockPercentage = (count($lowStockItems) / $totalItems) * 100;
+                        @endphp
+                        <div class="progress mb-3" style="height: 25px;">
+                            <div class="progress-bar bg-success" style="width: {{ $healthyPercentage }}%">
+                                <strong>Healthy: {{ $healthyCount }}</strong>
+                            </div>
+                            <div class="progress-bar bg-danger" style="width: {{ $lowStockPercentage }}%">
+                                <strong>Low Stock: {{ count($lowStockItems) }}</strong>
+                            </div>
+                        </div>
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <h4 class="text-success">{{ number_format($healthyPercentage, 1) }}%</h4>
+                                <small class="text-muted">Healthy Items</small>
+                            </div>
+                            <div class="col-6">
+                                <h4 class="text-danger">{{ number_format($lowStockPercentage, 1) }}%</h4>
+                                <small class="text-muted">Low Stock Items</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.card -->
+            </section>
+            <!-- /.Left col -->
+
+            <!-- right col -->
+            <section class="col-lg-5 connectedSortable">
+                <!-- Financial Summary -->
+                <div class="card card-info">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-chart-pie mr-1"></i>
+                            Financial Summary
+                        </h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-6 border-right">
+                                <h5 class="text-success">Rs {{ number_format($stats['total_revenue'] ?? 0, 2) }}</h5>
+                                <small class="text-muted">Total Revenue</small>
+                            </div>
+                            <div class="col-6">
+                                <h5 class="text-danger">Rs {{ number_format($stats['total_expenses'] ?? 0, 2) }}</h5>
+                                <small class="text-muted">Total Expenses</small>
+                            </div>
+                            <div class="col-12 mt-3 pt-3 border-top">
+                                @php
+                                $netProfit = ($stats['total_revenue'] ?? 0) - ($stats['total_expenses'] ?? 0);
+                                $profitClass = $netProfit >= 0 ? 'text-success' : 'text-danger';
+                                @endphp
+                                <h4 class="{{ $profitClass }}">Rs {{ number_format($netProfit, 2) }}</h4>
+                                <small class="text-muted">Net Profit</small>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                    <div class="card-footer text-center">
+                        <a href="{{ route('accounting.dashboard') }}" class="btn btn-sm btn-default">
+                            View Financial Reports
+                        </a>
+                    </div>
+                </div>
+                <!-- /.card -->
+
+                <!-- Recent Purchases -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-shopping-cart mr-1"></i>
+                            Recent Purchases
+                        </h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        @if($recentPurchases->count() > 0)
+                        <div class="list-group">
+                            @foreach($recentPurchases as $purchase)
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">{{ $purchase->purchase_number }}</h6>
+                                        <small class="text-muted">{{ $purchase->vendor->name }}</small>
+                                    </div>
+                                    <div class="text-right">
+                                        <strong>Rs {{ number_format($purchase->total_amount, 2) }}</strong>
+                                        <br>
+                                        <small class="text-muted">{{ $purchase->purchase_date->format('M j') }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                        @else
+                        <p class="text-center text-muted py-3">No recent purchases</p>
+                        @endif
+                    </div>
+                    <!-- /.card-body -->
+                    <div class="card-footer text-center">
+                        <a href="{{ route('purchases.index') }}" class="btn btn-sm btn-default">
+                            View All Purchases
+                        </a>
+                    </div>
+                </div>
+                <!-- /.card -->
+
+                <!-- Recent Production -->
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-industry mr-1"></i>
+                            Recent Production Runs
+                        </h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        @if($recentProductions->count() > 0)
+                        <div class="list-group">
+                            @foreach($recentProductions as $production)
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">{{ $production->batch_number }}</h6>
+                                        <small class="text-muted">
+                                            {{ $production->billOfMaterial->product->name }} -
+                                            {{ $production->actual_quantity ?? $production->quantity_to_produce }} units
+                                        </small>
+                                    </div>
+                                    <span class="badge badge-{{ $production->status === 'completed' ? 'success' : 'warning' }}">
+                                        {{ ucfirst($production->status) }}
+                                    </span>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                        @else
+                        <p class="text-center text-muted py-3">No recent production runs</p>
+                        @endif
+                    </div>
+                    <!-- /.card-body -->
+                    <div class="card-footer text-center">
+                        <a href="{{ route('production-runs.index') }}" class="btn btn-sm btn-default">
+                            View All Production Runs
+                        </a>
+                    </div>
+                </div>
+                <!-- /.card -->
+
+                <!-- Performance Metrics -->
+                <div class="card card-dark">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-tachometer-alt mr-1"></i>
+                            Performance Metrics
+                        </h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-6 border-right">
+                                <h5>{{ number_format($performance['stock_turnover'] ?? 2.5, 2) }}</h5>
+                                <small class="text-muted">Stock Turnover</small>
+                            </div>
+                            <div class="col-6">
+                                <h5>{{ $performance['order_fulfillment_rate'] ?? 95 }}%</h5>
+                                <small class="text-muted">Fulfillment Rate</small>
+                            </div>
+                            <div class="col-6 border-right border-top">
+                                <h5>{{ $performance['production_efficiency'] ?? 88 }}%</h5>
+                                <small class="text-muted">Production Efficiency</small>
+                            </div>
+                            <div class="col-6 border-top">
+                                <h5>{{ $performance['customer_satisfaction'] ?? 92 }}%</h5>
+                                <small class="text-muted">Customer Satisfaction</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.card -->
+
+                <!-- Quick Actions -->
+                <div class="card card-success">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-bolt mr-1"></i>
+                            Quick Actions
+                        </h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6">
+                                <a href="{{ route('purchases.create') }}" class="btn btn-app bg-info">
+                                    <i class="fas fa-plus"></i> New Purchase
+                                </a>
+                            </div>
+                            <div class="col-6">
+                                <a href="{{ route('sales.create') }}" class="btn btn-app bg-success">
+                                    <i class="fas fa-cash-register"></i> New Sale
+                                </a>
+                            </div>
+                            <div class="col-6">
+                                <a href="{{ route('production-runs.create') }}" class="btn btn-app bg-warning">
+                                    <i class="fas fa-industry"></i> Start Production
+                                </a>
+                            </div>
+                            <div class="col-6">
+                                <a href="{{ route('items.create') }}" class="btn btn-app bg-primary">
+                                    <i class="fas fa-box"></i> Add Item
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.card -->
+            </section>
+            <!-- right col -->
+        </div>
+        <!-- /.row (main row) -->
+    </div><!-- /.container-fluid -->
+</section>
+<!-- /.content -->
+
+<!-- /.content-wrapper -->
+@endsection
+
+@section('scripts')
+<script>
+    $(document).ready(function() {
+        // Initialize any dashboard-specific scripts here
+        console.log('Dashboard loaded successfully');
+    });
+
+</script>
 @endsection

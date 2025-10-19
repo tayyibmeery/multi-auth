@@ -1,4 +1,4 @@
- <?php
+<?php
 
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\User\AuthController as UserAuthController;
@@ -14,75 +14,140 @@ use App\Http\Controllers\BillOfMaterialController;
 use App\Http\Controllers\ProductionRunController;
 use App\Http\Controllers\StockLedgerController;
 use App\Http\Controllers\ReportController;
+
 use Illuminate\Support\Facades\Route;
 
-// Public Routes
-Route::get('/', function () {
-    return view('welcome');
-});
+use App\Http\Controllers\SaleController;
+use App\Http\Controllers\SalePaymentController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\AccountingController;
+use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\SalaryPaymentController;
+use App\Http\Controllers\WebsiteController;
+use App\Http\Controllers\WebsiteSettingsController;
+use App\Http\Controllers\ServiceProductController;
+use App\Http\Controllers\ContactMessageController;
 
+// ========== WEBSITE ROUTES (Public) ==========
+Route::get('/', [WebsiteController::class, 'home'])->name('website.home');
+Route::get('/about', [WebsiteController::class, 'about'])->name('website.about');
+Route::get('/serproducts', [WebsiteController::class, 'products'])->name('website.serproducts');
+Route::get('/contact', [WebsiteController::class, 'contact'])->name('website.contact');
+Route::post('/contact', [WebsiteController::class, 'submitContact'])->name('website.contact.submit');
 
+// ========== AUTHENTICATION ROUTES ==========
+Route::get('/login', [UserAuthController::class, 'showLoginForm'])->name('login')->middleware('guest');
+Route::post('/login', [UserAuthController::class, 'login']);
+Route::get('/register', [UserAuthController::class, 'showRegisterForm'])->name('register');
+Route::post('/register', [UserAuthController::class, 'register']);
+Route::post('/logout', [UserAuthController::class, 'logout'])->name('logout');
 
-// User Authentication Routes
-
-    Route::get('/login', [UserAuthController::class, 'showLoginForm'])->name('login') ->middleware('guest');
-    Route::post('/login', [UserAuthController::class, 'login']);
-    Route::get('/register', [UserAuthController::class, 'showRegisterForm'])->name('register');
-    Route::post('/register', [UserAuthController::class, 'register']);
-    Route::post('/logout', [UserAuthController::class, 'logout'])->name('logout');
-
-
-// Protected Routes - Both Admin and User
+// ========== PROTECTED ROUTES (Both Admin and User) ==========
 Route::middleware(['auth'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Items - CRUD (Admin: full access, User: read and create)
+    // Items - CRUD
+    Route::get('/items/out-of-stock', [ItemController::class, 'outOfStock'])->name('items.out-of-stock');
     Route::get('/items/low-stock', [ItemController::class, 'lowStock'])->name('items.low-stock');
     Route::get('/items/search', [ItemController::class, 'search'])->name('items.search');
     Route::resource('items', ItemController::class);
 
-    // Purchases - CRUD (Both can access)
+    // Purchases - CRUD
     Route::resource('purchases', PurchaseController::class);
 
-    // Products - CRUD (Both can access)
+    // Products - CRUD
     Route::resource('products', ProductController::class);
 
-    //   Bill of Materials  - CRUD (Both can access)
+    // Bill of Materials - CRUD
     Route::resource('boms', BillOfMaterialController::class);
 
-    // Production Runs - CRUD (Both can access)
+    // Production Runs - CRUD
     Route::resource('production-runs', ProductionRunController::class);
 
-    // Stock Ledger - Read only (Both can access)
+    // Stock Ledger - Read only
     Route::get('/stock-ledgers', [StockLedgerController::class, 'index'])->name('stock-ledgers.index');
     Route::get('/stock-ledgers/item/{itemId}', [StockLedgerController::class, 'itemLedger'])->name('stock-ledgers.item');
     Route::get('/stock-ledgers/product/{productId}', [StockLedgerController::class, 'productLedger'])->name('stock-ledgers.product');
 
-    // Reports - Read only
-    Route::prefix('reports')->group(function () {
-        Route::get('/stock', [ReportController::class, 'stockReport'])->name('reports.stock');
-        Route::get('/purchases', [ReportController::class, 'purchaseReport'])->name('reports.purchases');
-        Route::get('/production', [ReportController::class, 'productionReport'])->name('reports.production');
-        Route::get('/low-stock', [ReportController::class, 'lowStockReport'])->name('reports.low-stock');
-        Route::get('/stock-valuation', [ReportController::class, 'stockValuation'])->name('reports.stock-valuation');
+    // Sales Routes
+    Route::resource('sales', SaleController::class);
+    Route::get('sales/{sale}/print', [SaleController::class, 'printInvoice'])->name('sales.print');
+    Route::get('sales/{sale}/payments/create', [SalePaymentController::class, 'create'])->name('sales.payments.create');
+    Route::post('sales/{sale}/payments', [SalePaymentController::class, 'store'])->name('sales.payments.store');
+
+    // Customer Routes
+    Route::resource('customers', CustomerController::class);
+
+    // Accounting Routes
+    Route::prefix('accounting')->name('accounting.')->group(function () {
+        Route::get('dashboard', [AccountingController::class, 'dashboard'])->name('dashboard');
+        Route::get('trial-balance', [AccountingController::class, 'trialBalance'])->name('trial-balance');
+        Route::get('income-statement', [AccountingController::class, 'incomeStatement'])->name('income-statement');
+        Route::get('balance-sheet', [AccountingController::class, 'balanceSheet'])->name('balance-sheet');
+        Route::get('vouchers', [AccountingController::class, 'vouchers'])->name('vouchers');
+    });
+
+    // Expense Routes
+    Route::resource('expenses', ExpenseController::class);
+
+    // Employee Routes
+    Route::resource('employees', EmployeeController::class);
+
+    // Salary Routes
+    Route::get('employees/{employee}/salaries/create', [SalaryPaymentController::class, 'create'])->name('salaries.create');
+    Route::post('salaries', [SalaryPaymentController::class, 'store'])->name('salaries.store');
+
+    // Reports Routes
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('sales', [ReportController::class, 'salesReport'])->name('sales');
+        Route::get('stock', [ReportController::class, 'stockReport'])->name('stock');
+        Route::get('purchases', [ReportController::class, 'purchaseReport'])->name('purchases');
+        Route::get('production', [ReportController::class, 'productionReport'])->name('production');
+        Route::get('low-stock', [ReportController::class, 'lowStockReport'])->name('low-stock');
+        Route::get('stock-valuation', [ReportController::class, 'stockValuation'])->name('stock-valuation');
+    });
+
+    // ========== ADMIN ONLY ROUTES ==========
+    Route::middleware(['admin'])->group(function () {
+        // Admin Dashboard
+        Route::get('/admin/dashboard', [DashboardController::class, 'adminDashboard'])->name('admin.dashboard');
+
+        // Vendors - CRUD (Admin only)
+        Route::resource('vendors', VendorController::class);
+
+        // Categories - CRUD (Admin only)
+        Route::resource('categories', CategoryController::class);
+
+        // Website Management Routes
+        Route::prefix('admin')->name('admin.')->group(function () {
+            // Dashboard
+            Route::get('/website', [WebsiteSettingsController::class, 'dashboard'])->name('website.dashboard');
+
+            // Company Information
+            Route::get('/company', [WebsiteSettingsController::class, 'company'])->name('company.index');
+            Route::post('/company', [WebsiteSettingsController::class, 'updateCompany'])->name('company.update');
+
+            // Service Products Management (Frontend Website Products)
+            Route::get('/service-products', [ServiceProductController::class, 'index'])->name('service-products.index');
+            Route::get('/service-products/create', [ServiceProductController::class, 'create'])->name('service-products.create');
+            Route::post('/service-products', [ServiceProductController::class, 'store'])->name('service-products.store');
+            Route::get('/service-products/{serviceProduct}/edit', [ServiceProductController::class, 'edit'])->name('service-products.edit');
+            Route::put('/service-products/{serviceProduct}', [ServiceProductController::class, 'update'])->name('service-products.update');
+            Route::delete('/service-products/{serviceProduct}', [ServiceProductController::class, 'destroy'])->name('service-products.destroy');
+
+            // Contact Messages
+            Route::get('/messages', [ContactMessageController::class, 'index'])->name('messages.index');
+    Route::get('/messages/{message}', [ContactMessageController::class, 'show'])->name('messages.show');
+    Route::put('/messages/{message}', [ContactMessageController::class, 'update'])->name('messages.update');
+    Route::delete('/messages/{message}', [ContactMessageController::class, 'destroy'])->name('messages.destroy');
+        });
     });
 });
 
-// Admin Only Routes
-Route::middleware(['auth', 'admin'])->group(function () {
-    // Admin Dashboard
-    Route::get('/admin/dashboard', [DashboardController::class, 'adminDashboard'])->name('admin.dashboard');
-
-    // Vendors - CRUD (Admin only)
-    Route::resource('vendors', VendorController::class);
-
-    // Categories - CRUD (Admin only)
-    Route::resource('categories', CategoryController::class);
-});
-
-
-//  Bill of Materials Items API for production
+// ========== API ROUTES ==========
+// Bill of Materials Items API for production
 Route::get('/boms/{bom}/items', function ($bom) {
     $bom = \App\Models\BillOfMaterial::with('bomItems.item')->findOrFail($bom);
     return response()->json([
@@ -103,11 +168,7 @@ Route::get('/boms/{bom}/items', function ($bom) {
     ]);
 })->name('boms.items');
 
-// Reports
-Route::prefix('reports')->group(function () {
-    Route::get('/stock', [ReportController::class, 'stockReport'])->name('reports.stock');
-    Route::get('/purchases', [ReportController::class, 'purchaseReport'])->name('reports.purchases');
-    Route::get('/production', [ReportController::class, 'productionReport'])->name('reports.production');
-    Route::get('/low-stock', [ReportController::class, 'lowStockReport'])->name('reports.low-stock');
-    Route::get('/stock-valuation', [ReportController::class, 'stockValuation'])->name('reports.stock-valuation');
+// ========== FALLBACK ROUTE ==========
+Route::fallback(function () {
+    return response()->view('errors.404', [], 404);
 });

@@ -2,104 +2,289 @@
 
 @section("title", "Edit Spare Part")
 
+@push('styles')
+<!-- Select2 -->
+<link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
+<link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+@endpush
 
 @section("content")
-<div class="mx-auto max-w-4xl">
-    <div class="rounded-lg bg-white shadow">
-        <div class="border-b border-gray-200 px-6 py-4">
-            <h2 class="text-xl font-semibold text-gray-800">Edit Spare Part: {{ $item->name }}</h2>
-
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Edit Spare Part</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('items.index') }}">Spare Parts</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('items.show', $item) }}">{{ $item->name }}</a></li>
+                    <li class="breadcrumb-item active">Edit</li>
+                </ol>
+            </div>
         </div>
-        <form action="{{ route("items.update", $item) }}" method="POST" class="p-6">
-            @csrf
-            @method("PUT")
-            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                <div class="space-y-4">
-                    <div>
-                        <label for="name" class="block text-sm font-medium text-gray-700">Spare Part Name *</label>
+    </div><!-- /.container-fluid -->
+</section>
 
-                        <input type="text" name="name" id="name" required class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500" value="{{ old("name", $item->name) }}">
-                        @error("name")
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header border-bottom-0">
+                        <h3 class="card-title">
+                            <i class="fas fa-edit mr-2"></i>
+                            Edit Spare Part: {{ $item->name }}
+                        </h3>
+                        <div class="card-tools">
+                            <a href="{{ route('items.show', $item) }}" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-arrow-left mr-1"></i> Back to Spare Part
+                            </a>
+                        </div>
                     </div>
 
-                    <div>
-                        <label for="code" class="block text-sm font-medium text-gray-700">Spare Part Code *</label>
+                    <form action="{{ route('items.update', $item) }}" method="POST" id="itemForm">
+                        @csrf
+                        @method('PUT')
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="name" class="form-label">Spare Part Name <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text bg-light border-right-0">
+                                                    <i class="fas fa-tag text-muted"></i>
+                                                </span>
+                                            </div>
+                                            <input type="text" class="form-control @error('name') is-invalid @enderror rounded-right" id="name" name="name" placeholder="Enter spare part name" value="{{ old('name', $item->name) }}" required>
+                                        </div>
+                                        @error('name')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
 
-                        <input type="text" name="code" id="code" required class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500" value="{{ old("code", $item->code) }}">
-                        @error("code")
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="code" class="form-label">Spare Part Code <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text bg-light border-right-0">
+                                                    <i class="fas fa-barcode text-muted"></i>
+                                                </span>
+                                            </div>
+                                            <input type="text" class="form-control @error('code') is-invalid @enderror rounded-right" id="code" name="code" placeholder="Enter spare part code" value="{{ old('code', $item->code) }}" required>
+                                        </div>
+                                        @error('code')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
 
-                    <div>
-                        <label for="category_id" class="block text-sm font-medium text-gray-700">Category *</label>
-                        <select name="category_id" id="category_id" required class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500">
-                            <option value="">Select Category</option>
-                            @foreach ($categories as $category)
-                            <option value="{{ $category->id }}" {{ old("category_id", $item->category_id) == $category->id ? "selected" : "" }}>
-                                {{ $category->name }}
-                            </option>
-                            @endforeach
-                        </select>
-                        @error("category_id")
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="category_id" class="form-label">Category <span class="text-danger">*</span></label>
+                                        <select class="form-control select2bs4 @error('category_id') is-invalid @enderror" name="category_id" style="width: 100%;" required>
+                                            <option value="">Select Category</option>
+                                            @foreach ($categories as $category)
+                                            <option value="{{ $category->id }}" {{ old('category_id', $item->category_id) == $category->id ? 'selected' : '' }}>
+                                                {{ $category->name }}
+                                            </option>
+                                            @endforeach
+                                        </select>
+                                        @error('category_id')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
 
-                    <div>
-                        <label for="unit" class="block text-sm font-medium text-gray-700">Unit *</label>
-                        <input type="text" name="unit" id="unit" required class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500" value="{{ old("unit", $item->unit) }}">
-                        @error("unit")
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="unit" class="form-label">Unit <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text bg-light border-right-0">
+                                                    <i class="fas fa-balance-scale text-muted"></i>
+                                                </span>
+                                            </div>
+                                            <input type="text" class="form-control @error('unit') is-invalid @enderror rounded-right" id="unit" name="unit" placeholder="Enter unit (pcs, kg, etc.)" value="{{ old('unit', $item->unit) }}" required>
+                                        </div>
+                                        @error('unit')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="current_price" class="form-label">Current Price (Rs) <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text bg-light border-right-0">
+                                                    <i class="fas fa-rupee-sign text-muted"></i>
+                                                </span>
+                                            </div>
+                                            <input type="number" class="form-control @error('current_price') is-invalid @enderror rounded-right" id="current_price" name="current_price" step="0.01" min="0" placeholder="0.00" value="{{ old('current_price', $item->current_price) }}" required>
+                                        </div>
+                                        @error('current_price')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="current_stock" class="form-label">Current Stock <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text bg-light border-right-0">
+                                                    <i class="fas fa-boxes text-muted"></i>
+                                                </span>
+                                            </div>
+                                            <input type="number" class="form-control @error('current_stock') is-invalid @enderror rounded-right" id="current_stock" name="current_stock" min="0" placeholder="0" value="{{ old('current_stock', $item->current_stock) }}" required>
+                                        </div>
+                                        @error('current_stock')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="min_stock" class="form-label">Minimum Stock <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text bg-light border-right-0">
+                                                    <i class="fas fa-exclamation-triangle text-muted"></i>
+                                                </span>
+                                            </div>
+                                            <input type="number" class="form-control @error('min_stock') is-invalid @enderror rounded-right" id="min_stock" name="min_stock" min="0" placeholder="0" value="{{ old('min_stock', $item->min_stock) }}" required>
+                                        </div>
+                                        @error('min_stock')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description" rows="3" placeholder="Enter spare part description">{{ old('description', $item->description) }}</textarea>
+                                @error('description')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- Stock Information -->
+                            <div class="bg-light p-4 rounded mb-4">
+                                <h5 class="font-weight-bold text-dark mb-3">
+                                    <i class="fas fa-chart-bar mr-2"></i>Stock Information
+                                </h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="text-muted">Stock Value:</span>
+                                            <span class="font-weight-bold text-success">Rs {{ number_format($item->stock_value, 2) }}</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="text-muted">Stock Status:</span>
+                                            <span class="font-weight-bold {{ $item->current_stock == 0 ? 'text-danger' : ($item->is_low_stock ? 'text-warning' : 'text-success') }}">
+                                                @if($item->current_stock == 0)
+                                                Out of Stock
+                                                @elseif($item->is_low_stock)
+                                                Low Stock
+                                                @else
+                                                In Stock
+                                                @endif
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="text-muted">Created:</span>
+                                            <span class="font-weight-bold text-muted">{{ $item->created_at->format('M j, Y') }}</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="text-muted">Last Updated:</span>
+                                            <span class="font-weight-bold text-muted">{{ $item->updated_at->format('M j, Y') }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-0">
+                                <div class="custom-control custom-switch custom-switch-lg">
+                                    <input type="checkbox" class="custom-control-input" id="status" name="status" value="1" {{ old('status', $item->status) ? 'checked' : '' }}>
+                                    <label class="custom-control-label" for="status">
+                                        <span class="font-weight-bold">Active Spare Part</span>
+                                    </label>
+                                </div>
+                                <small class="form-text text-muted">Spare part will be available for purchases when active</small>
+                            </div>
+                        </div>
+
+                        <div class="card-footer bg-white border-top">
+                            <div class="row justify-content-between align-items-center">
+                                <div class="col-md-6">
+                                    <small class="text-muted">
+                                        <i class="fas fa-info-circle mr-1"></i>
+                                        Fields marked with <span class="text-danger">*</span> are required
+                                    </small>
+                                </div>
+                                <div class="col-md-6 text-right">
+                                    <button type="reset" class="btn btn-outline-secondary mr-2">
+                                        <i class="fas fa-undo mr-1"></i> Reset
+                                    </button>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save mr-1"></i> Update Spare Part
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-
-                <div class="space-y-4">
-                    <div>
-                        <label for="current_price" class="block text-sm font-medium text-gray-700">Current Price (Rs )
-                            *</label>
-                        <input type="number" name="current_price" id="current_price" step="0.01" min="0" required class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500" value="{{ old("current_price", $item->current_price) }}">
-                        @error("current_price")
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="current_stock" class="block text-sm font-medium text-gray-700">Current Stock
-                            *</label>
-                        <input type="number" name="current_stock" id="current_stock" min="0" required class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500" value="{{ old("current_stock", $item->current_stock) }}">
-                        @error("current_stock")
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="min_stock" class="block text-sm font-medium text-gray-700">Minimum Stock *</label>
-                        <input type="number" name="min_stock" id="min_stock" min="0" required class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500" value="{{ old("min_stock", $item->min_stock) }}">
-                        @error("min_stock")
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-                </div>
             </div>
-
-            <div class="mt-6">
-                <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-                <textarea name="description" id="description" rows="3" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500">{{ old("description", $item->description) }}</textarea>
-            </div>
-
-            <div class="mt-6 flex justify-end space-x-3">
-                <a href="{{ route("items.index") }}" class="rounded-lg bg-gray-300 px-4 py-2 font-medium text-gray-800 hover:bg-gray-400">
-                    Cancel
-                </a>
-                <button type="submit" class="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700">
-                    Update Item
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
 @endsection
+
+@push('scripts')
+<!-- Select2 -->
+<script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
+
+<script>
+    $(function() {
+        // Initialize Select2
+        $('.select2bs4').select2({
+            theme: 'bootstrap4'
+            , placeholder: 'Select an option'
+            , allowClear: true
+        });
+
+        // Form validation enhancement
+        $('#itemForm').on('submit', function() {
+            $('.is-invalid').removeClass('is-invalid');
+            $('button[type="submit"]').prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-1"></i> Updating...');
+        });
+
+        // Real-time validation for required fields
+        $('#name, #code, #unit').on('blur', function() {
+            if (!$(this).val().trim()) {
+                $(this).addClass('is-invalid');
+            } else {
+                $(this).removeClass('is-invalid');
+            }
+        });
+    });
+
+</script>
+@endpush

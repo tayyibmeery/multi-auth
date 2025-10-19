@@ -2,319 +2,449 @@
 
 @section("title", $vendor->name)
 
+@push('styles')
+<!-- DataTables -->
+<link rel="stylesheet" href="{{ asset('plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
+<link rel="stylesheet" href="{{ asset('plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
+<link rel="stylesheet" href="{{ asset('plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
+@endpush
+
 @section("content")
-<div class="space-y-6">
-    <div class="flex items-center justify-between">
-        <div>
-            <h1 class="text-2xl font-bold text-gray-900">{{ $vendor->name }}</h1>
-            <p class="text-gray-600">Vendor Details</p>
-        </div>
-        <div class="flex space-x-3">
-            <a href="{{ route("vendors.edit", $vendor) }}" class="rounded-lg bg-green-600 px-4 py-2 font-medium text-white hover:bg-green-700">
-                <i class="fas fa-edit mr-2"></i>Edit
-            </a>
-            <a href="{{ route("vendors.index") }}" class="rounded-lg bg-gray-600 px-4 py-2 font-medium text-white hover:bg-gray-700">
-                <i class="fas fa-arrow-left mr-2"></i>Back to Vendors
-            </a>
-        </div>
-    </div>
-
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <!-- Vendor Information -->
-        <div class="rounded-lg bg-white p-6 shadow">
-            <h3 class="mb-4 text-lg font-semibold text-gray-900">Vendor Information</h3>
-            <dl class="space-y-3">
-                <div>
-                    <dt class="text-sm font-medium text-gray-500">Name</dt>
-                    <dd class="text-sm text-gray-900">{{ $vendor->name }}</dd>
-                </div>
-                <div>
-                    <dt class="text-sm font-medium text-gray-500">Contact Person</dt>
-                    <dd class="text-sm text-gray-900">{{ $vendor->contact_person ?? "N/A" }}</dd>
-                </div>
-                <div>
-                    <dt class="text-sm font-medium text-gray-500">Email</dt>
-                    <dd class="text-sm text-gray-900">
-                        @if ($vendor->email)
-                        <a href="mailto:{{ $vendor->email }}" class="text-blue-600 hover:text-blue-500">
-                            {{ $vendor->email }}
-                        </a>
-                        @else
-                        N/A
-                        @endif
-                    </dd>
-                </div>
-                <div>
-                    <dt class="text-sm font-medium text-gray-500">Phone</dt>
-                    <dd class="text-sm text-gray-900">
-                        @if ($vendor->phone)
-                        <a href="tel:{{ $vendor->phone }}" class="text-blue-600 hover:text-blue-500">
-                            {{ $vendor->phone }}
-                        </a>
-                        @else
-                        N/A
-                        @endif
-                    </dd>
-                </div>
-                <div>
-                    <dt class="text-sm font-medium text-gray-500">Address</dt>
-                    <dd class="text-sm text-gray-900">{{ $vendor->address ?? "N/A" }}</dd>
-                </div>
-                <div>
-                    <dt class="text-sm font-medium text-gray-500">Total Purchases</dt>
-                    <dd class="text-lg font-semibold text-blue-600">Rs {{ number_format($vendor->total_purchases, 2) }}
-                    </dd>
-                </div>
-                <div>
-                    <dt class="text-sm font-medium text-gray-500">Purchase Count</dt>
-                    <dd class="text-sm text-gray-900">{{ $vendor->purchases_count }}</dd>
-                </div>
-                <div>
-                    <dt class="text-sm font-medium text-gray-500">Average Purchase</dt>
-                    <dd class="text-sm text-gray-900">
-                        @if ($vendor->purchases_count > 0)
-                        Rs {{ number_format($vendor->total_purchases / $vendor->purchases_count, 2) }}
-                        @else
-                        Rs 0.00
-                        @endif
-                    </dd>
-                </div>
-            </dl>
-        </div>
-
-        <!-- Quick Actions -->
-        <div class="rounded-lg bg-white p-6 shadow">
-            <h3 class="mb-4 text-lg font-semibold text-gray-900">Quick Actions</h3>
-            <div class="space-y-3">
-                <a href="{{ route("purchases.create") }}?vendor_id={{ $vendor->id }}" class="block w-full rounded-lg bg-blue-600 px-4 py-2 text-center text-white hover:bg-blue-700">
-                    <i class="fas fa-shopping-cart mr-2"></i>Create Purchase
-                </a>
-                <a href="mailto:{{ $vendor->email }}" class="block w-full rounded-lg bg-green-600 px-4 py-2 text-center text-white hover:bg-green-700">
-                    <i class="fas fa-envelope mr-2"></i>Send Email
-                </a>
-                @if ($vendor->phone)
-                <a href="tel:{{ $vendor->phone }}" class="block w-full rounded-lg bg-purple-600 px-4 py-2 text-center text-white hover:bg-purple-700">
-                    <i class="fas fa-phone mr-2"></i>Call Vendor
-                </a>
-                @endif
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>{{ $vendor->name }}</h1>
             </div>
-
-            <!-- Statistics -->
-            <div class="mt-6 border-t border-gray-200 pt-6">
-                <h4 class="mb-3 text-sm font-medium text-gray-900">Performance Metrics</h4>
-                <div class="space-y-2">
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-600">Reliability Score</span>
-                        <span class="font-medium text-green-600">Excellent</span>
-                    </div>
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-600">Response Time</span>
-                        <span class="font-medium text-gray-600">24-48 hours</span>
-                    </div>
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-600">Payment Terms</span>
-                        <span class="font-medium text-gray-600">Net 30</span>
-                    </div>
-                </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('vendors.index') }}">Vendors</a></li>
+                    <li class="breadcrumb-item active">{{ $vendor->name }}</li>
+                </ol>
             </div>
         </div>
+    </div><!-- /.container-fluid -->
+</section>
 
-        <!-- Purchase Statistics -->
-        <div class="rounded-lg bg-white p-6 shadow">
-            <h3 class="mb-4 text-lg font-semibold text-gray-900">Purchase Statistics</h3>
-            <div class="space-y-4">
-                <div>
-                    <div class="mb-1 flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-700">Total Purchase Value</span>
-                        <span class="text-sm font-semibold text-blue-600">Rs
-                            {{ number_format($vendor->total_purchases, 2) }}</span>
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <!-- Vendor Information Row -->
+        <div class="row">
+            <!-- Vendor Details -->
+            <div class="col-md-4">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            Vendor Information
+                        </h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
                     </div>
-                    <div class="h-2 w-full rounded-full bg-gray-200">
-                        <div class="h-2 rounded-full bg-blue-600" style="width: 100%"></div>
-                    </div>
-                </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <strong><i class="fas fa-user mr-1"></i> Name</strong>
+                                <p class="text-muted">{{ $vendor->name }}</p>
+                                <hr>
 
-                <div>
-                    <div class="mb-1 flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-700">Number of Purchases</span>
-                        <span class="text-sm font-semibold text-green-600">{{ $vendor->purchases_count }}</span>
+                                <strong><i class="fas fa-user-tie mr-1"></i> Contact Person</strong>
+                                <p class="text-muted">{{ $vendor->contact_person ?? "N/A" }}</p>
+                                <hr>
+
+                                <strong><i class="fas fa-envelope mr-1"></i> Email</strong>
+                                <p class="text-muted">
+                                    @if ($vendor->email)
+                                    <a href="mailto:{{ $vendor->email }}" class="text-primary">
+                                        {{ $vendor->email }}
+                                    </a>
+                                    @else
+                                    N/A
+                                    @endif
+                                </p>
+                                <hr>
+
+                                <strong><i class="fas fa-phone mr-1"></i> Phone</strong>
+                                <p class="text-muted">
+                                    @if ($vendor->phone)
+                                    <a href="tel:{{ $vendor->phone }}" class="text-primary">
+                                        {{ $vendor->phone }}
+                                    </a>
+                                    @else
+                                    N/A
+                                    @endif
+                                </p>
+                                <hr>
+
+                                <strong><i class="fas fa-map-marker-alt mr-1"></i> Address</strong>
+                                <p class="text-muted">{{ $vendor->address ?? "N/A" }}</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="h-2 w-full rounded-full bg-gray-200">
-                        <div class="h-2 rounded-full bg-green-600" style="width: {{ min(($vendor->purchases_count / max($vendor->purchases_count, 1)) * 100, 100) }}%">
+                    <div class="card-footer">
+                        <div class="row">
+                            <div class="col-6">
+                                <a href="{{ route('vendors.edit', $vendor) }}" class="btn btn-warning btn-block">
+                                    <i class="fas fa-edit mr-1"></i> Edit
+                                </a>
+                            </div>
+                            <div class="col-6">
+                                <a href="{{ route('vendors.index') }}" class="btn btn-default btn-block">
+                                    <i class="fas fa-arrow-left mr-1"></i> Back
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div>
-                    <div class="mb-1 flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-700">Average Purchase Value</span>
-                        <span class="text-sm font-semibold text-purple-600">
-                            @if ($vendor->purchases_count > 0)
-                            Rs {{ number_format($vendor->total_purchases / $vendor->purchases_count, 2) }}
-                            @else
-                            Rs 0.00
-                            @endif
-                        </span>
+            <!-- Purchase Statistics -->
+            <div class="col-md-4">
+                <div class="card card-info">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-chart-bar mr-1"></i>
+                            Purchase Statistics
+                        </h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
                     </div>
-                    <div class="h-2 w-full rounded-full bg-gray-200">
-                        <div class="h-2 rounded-full bg-purple-600" style="width: 75%"></div>
+                    <div class="card-body">
+                        <div class="small-box bg-gradient-success">
+                            <div class="inner">
+                                <h3>Rs {{ number_format($vendor->total_purchases, 2) }}</h3>
+                                <p>Total Purchase Value</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                        </div>
+
+                        <div class="row text-center mt-3">
+                            <div class="col-6 border-right">
+                                <div class="description-block">
+                                    <h5 class="description-header">{{ $vendor->purchases_count }}</h5>
+                                    <span class="description-text">TOTAL PURCHASES</span>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="description-block">
+                                    <h5 class="description-header">
+                                        @if ($vendor->purchases_count > 0)
+                                        Rs {{ number_format($vendor->total_purchases / $vendor->purchases_count, 2) }}
+                                        @else
+                                        Rs 0.00
+                                        @endif
+                                    </h5>
+                                    <span class="description-text">AVG PURCHASE</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Progress bars -->
+                        <div class="progress-group mt-3">
+                            Purchase Frequency
+                            <span class="float-right"><b>{{ $vendor->purchases_count }}</b>/month</span>
+                            <div class="progress progress-sm">
+                                <div class="progress-bar bg-primary" style="width: {{ min($vendor->purchases_count * 10, 100) }}%"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Monthly Trend -->
-            <div class="mt-6 border-t border-gray-200 pt-6">
-                <h4 class="mb-3 text-sm font-medium text-gray-900">Monthly Trend</h4>
-                @php
-                $monthlyPurchases = $vendor
-                ->purchases()
-                ->selectRaw(
-                "MONTH(purchase_date) as month, YEAR(purchase_date) as year, SUM(total_amount) as total",
-                )
-                ->whereYear("purchase_date", now()->year)
-                ->groupBy("year", "month")
-                ->orderBy("year", "asc")
-                ->orderBy("month", "asc")
-                ->get();
-                @endphp
-
-                @if ($monthlyPurchases->count() > 0)
-                <div class="space-y-2">
-                    @foreach ($monthlyPurchases as $data)
-                    <div class="flex items-center justify-between text-sm">
-                        <span class="text-gray-600">
-                            {{ DateTime::createFromFormat("!m", $data->month)->format("M") }}
-                        </span>
-                        <span class="font-medium text-gray-900">
-                            Rs {{ number_format($data->total, 2) }}
-                        </span>
+            <!-- Quick Actions -->
+            <div class="col-md-4">
+                <div class="card card-success">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-bolt mr-1"></i>
+                            Quick Actions
+                        </h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
                     </div>
-                    @endforeach
-                </div>
-                @else
-                <p class="text-center text-sm text-gray-500">No purchases this year</p>
-                @endif
-            </div>
-        </div>
-    </div>
-
-    <!-- Recent Purchases -->
-    <div class="rounded-lg bg-white p-6 shadow">
-        <div class="mb-4 flex items-center justify-between">
-            <h3 class="text-lg font-semibold text-gray-900">Recent Purchases</h3>
-            <a href="{{ route("purchases.create") }}?vendor_id={{ $vendor->id }}" class="rounded-lg bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700">
-                <i class="fas fa-plus mr-1"></i> New Purchase
-            </a>
-        </div>
-
-        @if ($vendor->purchases->count() > 0)
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Purchase No</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Date</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Spare Part Count</th>
-
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Total Amount
-                        </th>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Status</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200">
-                    @foreach ($vendor->purchases->take(10) as $purchase)
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-4 py-3 text-sm font-medium text-gray-900">
-                            {{ $purchase->purchase_number }}
-                        </td>
-                        <td class="px-4 py-3 text-sm text-gray-900">
-                            {{ $purchase->purchase_date->format("M j, Y") }}
-                        </td>
-                        <td class="px-4 py-3 text-sm text-gray-900">
-                            {{ $purchase->purchaseItems->count() }} Spare Part
-                        </td>
-                        <td class="px-4 py-3 text-sm font-semibold text-gray-900">
-                            Rs {{ number_format($purchase->total_amount, 2) }}
-                        </td>
-                        <td class="px-4 py-3">
-                            <span class="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
-                                Completed
-                            </span>
-                        </td>
-                        <td class="px-4 py-3 text-sm font-medium">
-                            <a href="{{ route("purchases.show", $purchase) }}" class="text-blue-600 hover:text-blue-900">
-                                View Details
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <a href="{{ route('purchases.create') }}?vendor_id={{ $vendor->id }}" class="btn btn-primary btn-block">
+                                <i class="fas fa-shopping-cart mr-1"></i> Create Purchase
                             </a>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-        <div class="mt-4 text-center">
-            <a href="{{ route("purchases.index") }}?vendor_id={{ $vendor->id }}" class="text-sm font-medium text-blue-600 hover:text-blue-500">
-                View All Purchases from this Vendor →
-            </a>
-        </div>
-        @else
-        <div class="py-8 text-center">
-            <i class="fas fa-shopping-cart mb-4 text-4xl text-gray-400"></i>
-            <p class="mb-2 text-lg text-gray-500">No purchases from this vendor yet</p>
-            <p class="mb-4 text-sm text-gray-400">Start by creating your first purchase order</p>
-            <a href="{{ route("purchases.create") }}?vendor_id={{ $vendor->id }}" class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700">
-                <i class="fas fa-plus mr-2"></i> Create First Purchase
-            </a>
-        </div>
-        @endif
-    </div>
 
-    <!-- Top Purchased Items -->
-    @if ($vendor->purchases->count() > 0)
-    <div class="rounded-lg bg-white p-6 shadow">
-        <h3 class="mb-4 text-lg font-semibold text-gray-900">Frequently Purchased Spare Parts </h3>
+                            @if ($vendor->email)
+                            <a href="mailto:{{ $vendor->email }}" class="btn btn-info btn-block">
+                                <i class="fas fa-envelope mr-1"></i> Send Email
+                            </a>
+                            @endif
 
-        @php
-        $purchaseItems = $vendor->purchases->flatMap->purchaseItems;
-        $itemGroups = $purchaseItems->groupBy("item_id");
-        @endphp
+                            @if ($vendor->phone)
+                            <a href="tel:{{ $vendor->phone }}" class="btn btn-warning btn-block">
+                                <i class="fas fa-phone mr-1"></i> Call Vendor
+                            </a>
+                            @endif
+                        </div>
 
-        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            @foreach ($itemGroups->take(6) as $itemId => $items)
-            @php
-            $item = $items->first()->item;
-            $totalQuantity = $items->sum("quantity");
-            $totalSpent = $items->sum("total_price");
-            @endphp
-            <div class="rounded-lg border border-gray-200 p-4 transition-shadow hover:shadow-md">
-                <div class="mb-2 flex items-start justify-between">
-                    <div>
-                        <h4 class="text-sm font-medium text-gray-900">{{ $item->name }}</h4>
-                        <p class="text-xs text-gray-500">{{ $item->code }}</p>
-                    </div>
-                    <span class="rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-800">
-                        {{ $items->count() }} purchases
-                    </span>
-                </div>
-                <div class="space-y-1 text-xs">
-                    <div class="flex justify-between">
-                        <span class="text-gray-600">Total Quantity:</span>
-                        <span class="font-medium">{{ $totalQuantity }} {{ $item->unit }}</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-600">Total Spent:</span>
-                        <span class="font-medium text-green-600">Rs {{ number_format($totalSpent, 2) }}</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-600">Avg Price:</span>
-                        <span class="font-medium">Rs
-                            {{ number_format($totalSpent / $totalQuantity, 2) }}</span>
+                        <!-- Performance Metrics -->
+                        <div class="mt-4 pt-3 border-top">
+                            <h5 class="text-center mb-3">
+                                <i class="fas fa-chart-line mr-1"></i>
+                                Performance Metrics
+                            </h5>
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <div class="info-box bg-gradient-success">
+                                        <span class="info-box-icon"><i class="fas fa-star"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">Rating</span>
+                                            <span class="info-box-number">4.8/5</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="info-box bg-gradient-info">
+                                        <span class="info-box-icon"><i class="fas fa-clock"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">Response</span>
+                                            <span class="info-box-number">24h</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="info-box bg-gradient-warning">
+                                        <span class="info-box-icon"><i class="fas fa-file-invoice-dollar"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">Terms</span>
+                                            <span class="info-box-number">Net 30</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            @endforeach
         </div>
-    </div>
-    @endif
-</div>
+
+        <!-- Recent Purchases & Top Items Row -->
+        <div class="row">
+            <!-- Recent Purchases -->
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-shopping-cart mr-1"></i>
+                            Recent Purchases
+                        </h3>
+                        <div class="card-tools">
+                            <a href="{{ route('purchases.create') }}?vendor_id={{ $vendor->id }}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus mr-1"></i> New Purchase
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        @if ($vendor->purchases->count() > 0)
+                        <div class="table-responsive">
+                            <table id="purchasesTable" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Purchase No</th>
+                                        <th>Date</th>
+                                        <th>Items Count</th>
+                                        <th>Total Amount</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($vendor->purchases->take(10) as $purchase)
+                                    <tr>
+                                        <td class="font-weight-bold">{{ $purchase->purchase_number }}</td>
+                                        <td>{{ $purchase->purchase_date->format("M j, Y") }}</td>
+                                        <td>
+                                            <span class="badge badge-info">{{ $purchase->purchaseItems->count() }} items</span>
+                                        </td>
+                                        <td class="font-weight-bold text-success">Rs {{ number_format($purchase->total_amount, 2) }}</td>
+                                        <td>
+                                            <span class="badge badge-success">Completed</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="{{ route('purchases.show', $purchase) }}" class="btn btn-info btn-sm">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="{{ route('purchases.index') }}?vendor_id={{ $vendor->id }}" class="btn btn-default">
+                                View All Purchases <i class="fas fa-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                        @else
+                        <div class="text-center py-5">
+                            <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No purchases from this vendor yet</h5>
+                            <p class="text-muted mb-4">Start by creating your first purchase order</p>
+                            <a href="{{ route('purchases.create') }}?vendor_id={{ $vendor->id }}" class="btn btn-primary">
+                                <i class="fas fa-plus mr-2"></i> Create First Purchase
+                            </a>
+                        </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Purchased Items -->
+            <div class="col-md-4">
+                <div class="card card-warning">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-cubes mr-1"></i>
+                            Top Purchased Items
+                        </h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        @if ($vendor->purchases->count() > 0)
+                        @php
+                        $purchaseItems = $vendor->purchases->flatMap->purchaseItems;
+                        $itemGroups = $purchaseItems->groupBy("item_id");
+                        @endphp
+
+                        @foreach ($itemGroups->take(5) as $itemId => $items)
+                        @php
+                        $item = $items->first()->item;
+                        $totalQuantity = $items->sum("quantity");
+                        $totalSpent = $items->sum("total_price");
+                        @endphp
+
+                        <div class="border-bottom pb-2 mb-2">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="mb-1 font-weight-bold">{{ $item->name }}</h6>
+                                    <small class="text-muted">{{ $item->code }}</small>
+                                </div>
+                                <span class="badge badge-primary">{{ $items->count() }}x</span>
+                            </div>
+                            <div class="small text-muted">
+                                <div class="d-flex justify-content-between">
+                                    <span>Qty: {{ $totalQuantity }} {{ $item->unit }}</span>
+                                    <span class="font-weight-bold text-success">Rs {{ number_format($totalSpent, 2) }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+
+                        @if($itemGroups->count() > 5)
+                        <div class="text-center mt-2">
+                            <small class="text-muted">+{{ $itemGroups->count() - 5 }} more items</small>
+                        </div>
+                        @endif
+                        @else
+                        <div class="text-center py-4">
+                            <i class="fas fa-box-open fa-2x text-muted mb-2"></i>
+                            <p class="text-muted mb-0">No items purchased yet</p>
+                        </div>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Monthly Trend -->
+                <div class="card card-info">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-chart-line mr-1"></i>
+                            Monthly Trend
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        @php
+                        $monthlyPurchases = $vendor
+                        ->purchases()
+                        ->selectRaw(
+                        "MONTH(purchase_date) as month, YEAR(purchase_date) as year, SUM(total_amount) as total",
+                        )
+                        ->whereYear("purchase_date", now()->year)
+                        ->groupBy("year", "month")
+                        ->orderBy("year", "asc")
+                        ->orderBy("month", "asc")
+                        ->get();
+                        @endphp
+
+                        @if ($monthlyPurchases->count() > 0)
+                        <div class="list-group list-group-flush">
+                            @foreach ($monthlyPurchases as $data)
+                            <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                <span class="font-weight-bold">
+                                    {{ DateTime::createFromFormat("!m", $data->month)->format("M") }}
+                                </span>
+                                <span class="badge badge-success badge-pill">
+                                    Rs {{ number_format($data->total, 2) }}
+                                </span>
+                            </div>
+                            @endforeach
+                        </div>
+                        @else
+                        <div class="text-center py-3">
+                            <i class="fas fa-chart-bar fa-2x text-muted mb-2"></i>
+                            <p class="text-muted mb-0">No data for this year</p>
+                        </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<!-- /.content -->
 @endsection
+
+@push('scripts')
+<!-- DataTables & Plugins -->
+<script src="{{ asset('plugins/datatables/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+<script src="{{ asset('plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
+<script src="{{ asset('plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
+
+<script>
+    $(function() {
+        // Initialize DataTable for purchases
+        $("#purchasesTable").DataTable({
+            "responsive": true
+            , "lengthChange": false
+            , "autoWidth": false
+            , "paging": true
+            , "searching": true
+            , "ordering": true
+            , "info": true
+            , "pageLength": 5
+            , "language": {
+                "search": "_INPUT_"
+                , "searchPlaceholder": "Search purchases..."
+                , "paginate": {
+                    "previous": "<i class='fas fa-chevron-left'></i>"
+                    , "next": "<i class='fas fa-chevron-right'></i>"
+                }
+            }
+        });
+    });
+
+</script>
+@endpush

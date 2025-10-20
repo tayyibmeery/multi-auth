@@ -2,116 +2,186 @@
 
 @section("title", "Start Production Run")
 
+@push('styles')
+<!-- Select2 -->
+<link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
+<link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+@endpush
+
 @section("content")
-<div class="mx-auto max-w-4xl">
-    <div class="rounded-lg bg-white shadow">
-        <div class="border-b border-gray-200 px-6 py-4">
-            <h2 class="text-xl font-semibold text-gray-800">Start Production Run</h2>
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Start Production Run</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('production-runs.index') }}">Production Runs</a></li>
+                    <li class="breadcrumb-item active">Create</li>
+                </ol>
+            </div>
         </div>
-        <form action="{{ route("production-runs.store") }}" method="POST" class="p-6" id="productionForm">
-            @csrf
+    </div><!-- /.container-fluid -->
+</section>
 
-            <!-- Production Header -->
-            <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-                <div>
-                    <label for="bom_id" class="block text-sm font-medium text-gray-700">Bill of Material *</label>
-                    <select name="bom_id" id="bom_id" required class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500">
-                        <option value="">Select BOM</option>
-                        @foreach ($boms as $bom)
-                        <option value="{{ $bom->id }}" data-product="{{ $bom->product->name }}" data-cost="{{ $bom->total_estimated_cost }}" {{ old("bom_id") == $bom->id ? "selected" : "" }}>
-                            {{ $bom->name }} - {{ $bom->product->name }} (Cost: Rs
-                            {{ number_format($bom->total_estimated_cost, 2) }})
-                        </option>
-                        @endforeach
-                    </select>
-                    @error("bom_id")
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header border-bottom-0">
+                        <h3 class="card-title">
+                            <i class="fas fa-industry mr-2"></i>
+                            Start New Production Run
+                        </h3>
+                        <div class="card-tools">
+                            <a href="{{ route('production-runs.index') }}" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-arrow-left mr-1"></i> Back to Production
+                            </a>
+                        </div>
+                    </div>
+
+                    <form action="{{ route('production-runs.store') }}" method="POST" id="productionForm">
+                        @csrf
+
+                        <!-- Production Header -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="bom_id" class="form-label">Bill of Material <span class="text-danger">*</span></label>
+                                        <select class="form-control select2bs4 @error('bom_id') is-invalid @enderror" name="bom_id" id="bom_id" style="width: 100%;" required>
+                                            <option value="">Select BOM</option>
+                                            @foreach ($boms as $bom)
+                                            <option value="{{ $bom->id }}" data-product="{{ $bom->product->name }}" data-cost="{{ $bom->total_estimated_cost }}" {{ old('bom_id') == $bom->id ? 'selected' : '' }}>
+                                                {{ $bom->name }} - {{ $bom->product->name }} (Cost: Rs {{ number_format($bom->total_estimated_cost, 2) }})
+                                            </option>
+                                            @endforeach
+                                        </select>
+                                        @error('bom_id')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="production_date" class="form-label">Production Date <span class="text-danger">*</span></label>
+                                        <input type="date" class="form-control @error('production_date') is-invalid @enderror" id="production_date" name="production_date" value="{{ old('production_date', date('Y-m-d')) }}" required>
+                                        @error('production_date')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Product Information -->
+                            <div id="productInfo" class="alert alert-info d-none">
+                                <h5 class="alert-heading"><i class="fas fa-info-circle mr-2"></i>Product Information</h5>
+                                <p class="mb-1">
+                                    <strong>Product:</strong> <span id="productName"></span>
+                                </p>
+                                <p class="mb-0">
+                                    <strong>Material Cost:</strong> <span id="materialCost"></span>
+                                </p>
+                            </div>
+
+                            <!-- Quantity -->
+                            <div class="form-group">
+                                <label for="quantity_to_produce" class="form-label">Quantity to Produce <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control @error('quantity_to_produce') is-invalid @enderror" id="quantity_to_produce" name="quantity_to_produce" value="{{ old('quantity_to_produce', 1) }}" required min="1">
+                                @error('quantity_to_produce')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- BOM Spare Parts Preview -->
+                            <div id="bomItemsPreview" class="d-none">
+                                <h5 class="mb-3"><i class="fas fa-list mr-2"></i>Required Materials</h5>
+                                <div class="bg-light p-3 rounded">
+                                    <div id="stockCheckResults"></div>
+                                    <div class="table-responsive mt-3">
+                                        <table class="table table-bordered table-sm" id="materialsTable">
+                                            <thead class="thead-light">
+                                                <tr>
+                                                    <th>Spare Parts</th>
+                                                    <th>Required</th>
+                                                    <th>Available</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="materialsTableBody">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Total Cost -->
+                            <div id="totalCostSection" class="bg-light p-4 rounded mt-3 d-none">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h5 class="font-weight-bold text-dark mb-3">
+                                            <i class="fas fa-calculator mr-2"></i>Cost Summary
+                                        </h5>
+                                    </div>
+                                    <div class="col-md-6 text-right">
+                                        <h4 class="font-weight-bold text-dark">Total Material Cost</h4>
+                                        <h2 id="totalProductionCost" class="font-weight-bold text-success">Rs 0.00</h2>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Notes -->
+                            <div class="form-group">
+                                <label for="notes" class="form-label">Notes</label>
+                                <textarea class="form-control @error('notes') is-invalid @enderror" id="notes" name="notes" rows="3" placeholder="Enter production notes">{{ old('notes') }}</textarea>
+                                @error('notes')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="card-footer bg-white border-top">
+                            <div class="row justify-content-between align-items-center">
+                                <div class="col-md-6">
+                                    <small class="text-muted">
+                                        <i class="fas fa-info-circle mr-1"></i>
+                                        Fields marked with <span class="text-danger">*</span> are required
+                                    </small>
+                                </div>
+                                <div class="col-md-6 text-right">
+                                    <button type="submit" id="submitBtn" class="btn btn-primary">
+                                        <i class="fas fa-play mr-1"></i> Start Production
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-
-                <div>
-                    <label for="production_date" class="block text-sm font-medium text-gray-700">Production Date
-                        *</label>
-                    <input type="date" name="production_date" id="production_date" required class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500" value="{{ old("production_date", date("Y-m-d")) }}">
-                    @error("production_date")
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
             </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+@endsection
 
-            <!-- Product Information -->
-            <div id="productInfo" class="mb-6 hidden rounded-lg bg-blue-50 p-4">
-                <h4 class="mb-2 text-sm font-medium text-blue-900">Product Information</h4>
-                <p class="text-sm text-blue-700">
-                    Product: <span id="productName" class="font-semibold"></span>
-                </p>
-                <p class="text-sm text-blue-700">
-                    Material Cost: <span id="materialCost" class="font-semibold"></span>
-                </p>
-            </div>
-
-            <!-- Quantity -->
-            <div class="mb-6">
-                <label for="quantity_to_produce" class="block text-sm font-medium text-gray-700">Quantity to Produce
-                    *</label>
-                <input type="number" name="quantity_to_produce" id="quantity_to_produce" required min="1" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500" value="{{ old("quantity_to_produce", 1) }}">
-                @error("quantity_to_produce")
-                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <!--  Bill of Materials Spare Parts  Preview -->
-
-            <div id="bomItemsPreview" class="mb-6 hidden">
-                <h3 class="mb-4 text-lg font-medium text-gray-900">Required Materials</h3>
-                <div class="rounded-lg bg-gray-50 p-4">
-                    <div id="stockCheckResults"></div>
-                    <table class="mt-4 hidden min-w-full divide-y divide-gray-200" id="materialsTable">
-                        <thead class="bg-gray-100">
-                            <tr>
-                                <th class="px-4 py-2 text-left text-xs font-medium uppercase text-gray-500">Spare Parts </th>
-
-                                <th class="px-4 py-2 text-left text-xs font-medium uppercase text-gray-500">Required
-                                </th>
-                                <th class="px-4 py-2 text-left text-xs font-medium uppercase text-gray-500">Available
-                                </th>
-                                <th class="px-4 py-2 text-left text-xs font-medium uppercase text-gray-500">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="materialsTableBody" class="divide-y divide-gray-200">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Total Cost -->
-            <div id="totalCostSection" class="mb-6 hidden rounded-lg bg-gray-50 p-4">
-                <div class="flex items-center justify-between">
-                    <span class="text-lg font-semibold text-gray-900">Total Material Cost:</span>
-                    <span id="totalProductionCost" class="text-2xl font-bold text-blue-600">Rs 0.00</span>
-                </div>
-            </div>
-
-            <!-- Notes -->
-            <div class="mb-6">
-                <label for="notes" class="block text-sm font-medium text-gray-700">Notes</label>
-                <textarea name="notes" id="notes" rows="3" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500">{{ old("notes") }}</textarea>
-            </div>
-
-            <div class="flex justify-end space-x-3">
-                <a href="{{ route("production-runs.index") }}" class="rounded-lg bg-gray-300 px-4 py-2 font-medium text-gray-800 hover:bg-gray-400">
-                    Cancel
-                </a>
-                <button type="submit" id="submitBtn" class="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700">
-                    Start Production
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
+@push('scripts')
+<!-- Select2 -->
+<script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Select2
+        $('.select2bs4').select2({
+            theme: 'bootstrap4'
+            , placeholder: 'Select an option'
+            , allowClear: true
+        });
+
         const bomSelect = document.getElementById('bom_id');
         const productInfo = document.getElementById('productInfo');
         const productName = document.getElementById('productName');
@@ -125,7 +195,7 @@
         const stockCheckResults = document.getElementById('stockCheckResults');
         const submitBtn = document.getElementById('submitBtn');
 
-        // Load  Bill of Materials details when selected
+        // Load BOM details when selected
         bomSelect.addEventListener('change', function() {
             const selectedOption = this.options[this.selectedIndex];
             if (selectedOption.value) {
@@ -134,15 +204,14 @@
 
                 productName.textContent = product;
                 materialCost.textContent = 'Rs ' + parseFloat(cost).toFixed(2);
-                productInfo.classList.remove('hidden');
+                productInfo.classList.remove('d-none');
 
-                // Load Bill of Materials Spare Parts
-
+                // Load BOM Spare Parts
                 loadBomItems(selectedOption.value);
             } else {
-                productInfo.classList.add('hidden');
-                bomItemsPreview.classList.add('hidden');
-                totalCostSection.classList.add('hidden');
+                productInfo.classList.add('d-none');
+                bomItemsPreview.classList.add('d-none');
+                totalCostSection.classList.add('d-none');
             }
         });
 
@@ -153,8 +222,7 @@
             }
         });
 
-        // Load Bill of Materials Spare Parts via AJAX
-
+        // Load BOM Spare Parts via AJAX
         function loadBomItems(bomId) {
             fetch(`/boms/${bomId}/items`)
                 .then(response => response.json())
@@ -164,12 +232,11 @@
                     checkStockAvailability(data.items, quantityInput.value);
                 })
                 .catch(error => {
-                    console.error('Error loading  Bill of Materials items:', error);
+                    console.error('Error loading BOM items:', error);
                 });
         }
 
-        // Display Bill of Materials Spare Parts
-
+        // Display BOM Spare Parts
         function displayBomItems(items, quantity) {
             materialsTableBody.innerHTML = '';
             let allItemsInStock = true;
@@ -184,54 +251,50 @@
 
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                <td class="px-4 py-2 text-sm text-gray-900">
-                    ${item.item.name} (${item.item.code})
-                </td>
-                <td class="px-4 py-2 text-sm text-gray-900">
-                    ${requiredQuantity} ${item.item.unit}
-                </td>
-                <td class="px-4 py-2 text-sm text-gray-900">
-                    ${item.item.current_stock} ${item.item.unit}
-                </td>
-                <td class="px-4 py-2">
-                    ${hasEnoughStock ?
-                        '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Sufficient</span>' :
-                        '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Short: ' + (requiredQuantity - item.item.current_stock) + '</span>'
-                    }
-                </td>
-            `;
+                    <td>
+                        <div class="font-weight-bold">${item.item.name}</div>
+                        <small class="text-muted">${item.item.code}</small>
+                    </td>
+                    <td>${requiredQuantity} ${item.item.unit}</td>
+                    <td>${item.item.current_stock} ${item.item.unit}</td>
+                    <td>
+                        ${hasEnoughStock ?
+                            '<span class="badge badge-success">Sufficient</span>' :
+                            '<span class="badge badge-danger">Short: ' + (requiredQuantity - item.item.current_stock) + '</span>'
+                        }
+                    </td>
+                `;
                 materialsTableBody.appendChild(row);
             });
 
             // Show/hide materials table
             if (items.length > 0) {
-                materialsTable.classList.remove('hidden');
-                bomItemsPreview.classList.remove('hidden');
+                bomItemsPreview.classList.remove('d-none');
             } else {
-                materialsTable.classList.add('hidden');
+                bomItemsPreview.classList.add('d-none');
             }
 
             // Update stock check results
             if (allItemsInStock) {
                 stockCheckResults.innerHTML = `
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-                    <i class="fas fa-check-circle mr-2"></i>
-                    All materials are available in stock. Production can proceed.
-                </div>
-            `;
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        All materials are available in stock. Production can proceed.
+                    </div>
+                `;
                 submitBtn.disabled = false;
-                submitBtn.classList.remove('bg-gray-400');
-                submitBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                submitBtn.classList.remove('btn-secondary');
+                submitBtn.classList.add('btn-primary');
             } else {
                 stockCheckResults.innerHTML = `
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                    <i class="fas fa-exclamation-triangle mr-2"></i>
-                    Some materials are insufficient. Please check stock levels before proceeding.
-                </div>
-            `;
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        Some materials are insufficient. Please check stock levels before proceeding.
+                    </div>
+                `;
                 submitBtn.disabled = false; // Still allow production but with warning
-                submitBtn.classList.remove('bg-gray-400');
-                submitBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                submitBtn.classList.remove('btn-secondary');
+                submitBtn.classList.add('btn-primary');
             }
         }
 
@@ -243,40 +306,23 @@
             });
 
             totalProductionCost.textContent = 'Rs ' + totalCost.toFixed(2);
-            totalCostSection.classList.remove('hidden');
+            totalCostSection.classList.remove('d-none');
         }
 
-        // Check stock availability
-        function checkStockAvailability(items, quantity) {
-            let allInStock = true;
-            items.forEach(item => {
-                if (item.item.current_stock < (item.quantity * quantity)) {
-                    allInStock = false;
-                }
-            });
-            return allInStock;
-        }
-
-        // Pre-fill  Bill of Materials if provided in URL
+        // Pre-fill BOM if provided in URL
         const urlParams = new URLSearchParams(window.location.search);
         const bomId = urlParams.get('bom_id');
-        const productId = urlParams.get('product_id');
-
         if (bomId) {
             bomSelect.value = bomId;
-            bomSelect.dispatchEvent(new Event('change'));
-        } else if (productId) {
-            // If product ID is provided, select the first active  Bill of Materials for that product
-            const options = Array.from(bomSelect.options);
-            const productBom = options.find(option => {
-                return option.getAttribute('data-product-id') === productId && option.value !== '';
-            });
-            if (productBom) {
-                bomSelect.value = productBom.value;
-                bomSelect.dispatchEvent(new Event('change'));
-            }
+            $(bomSelect).trigger('change');
         }
+
+        // Form validation enhancement
+        $('#productionForm').on('submit', function() {
+            $('.is-invalid').removeClass('is-invalid');
+            $('button[type="submit"]').prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-1"></i> Starting...');
+        });
     });
 
 </script>
-@endsection
+@endpush

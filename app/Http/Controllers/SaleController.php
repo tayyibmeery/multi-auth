@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CompanyInformation;
 use App\Models\Sale;
 use App\Models\Product;
 use App\Models\Customer;
@@ -116,9 +117,19 @@ class SaleController extends Controller
         return view('sales.show', compact('sale'));
     }
 
+    // public function printInvoice(Sale $sale)
+    // {
+    //     $sale->load(['saleItems.product', 'customer']);
+    //     return view('sales.invoice', compact('sale'));
+
+
+    // }
+
     public function printInvoice(Sale $sale)
-    {
-        $sale->load(['saleItems.product', 'customer']);
-        return view('sales.invoice', compact('sale'));
-    }
+{
+    // Get company information from database
+    $company = CompanyInformation::first();
+
+    return view('sales.invoice', compact('sale', 'company'));
+}
 }

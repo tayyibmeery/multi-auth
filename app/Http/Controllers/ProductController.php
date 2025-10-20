@@ -62,4 +62,18 @@ class ProductController extends Controller
         $product->delete();
         return redirect()->route('products.index')->with('success', 'Product deleted successfully.');
     }
+
+
+
+       public function lowStock()
+    {
+        $products = Product::whereRaw('current_stock <= min_stock')->where('current_stock', '>', 0)->paginate(10);
+        return view('products.low-stock', compact('products'));
+    }
+
+    public function outOfStock()
+    {
+        $products = Product::where('current_stock', '<=', 0)->paginate(10);
+        return view('products.out-of-stock', compact('products'));
+    }
 }

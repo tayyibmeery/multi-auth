@@ -1,6 +1,6 @@
 @extends("layouts.app")
 
-@section("title", "Create Purchase")
+@section("title", "Edit Purchase")
 
 @push('styles')
 <!-- Select2 -->
@@ -14,13 +14,14 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1 class="m-0">Create Purchase</h1>
+                <h1 class="m-0">Edit Purchase</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
                     <li class="breadcrumb-item"><a href="{{ route('purchases.index') }}">Purchases</a></li>
-                    <li class="breadcrumb-item active">Create</li>
+                    <li class="breadcrumb-item"><a href="{{ route('purchases.show', $purchase) }}">{{ $purchase->purchase_number }}</a></li>
+                    <li class="breadcrumb-item active">Edit</li>
                 </ol>
             </div>
         </div>
@@ -35,18 +36,19 @@
                 <div class="card">
                     <div class="card-header border-bottom-0">
                         <h3 class="card-title">
-                            <i class="fas fa-plus-circle mr-2"></i>
-                            Create New Purchase
+                            <i class="fas fa-edit mr-2"></i>
+                            Edit Purchase: {{ $purchase->purchase_number }}
                         </h3>
                         <div class="card-tools">
-                            <a href="{{ route('purchases.index') }}" class="btn btn-sm btn-outline-secondary">
-                                <i class="fas fa-arrow-left mr-1"></i> Back to Purchases
+                            <a href="{{ route('purchases.show', $purchase) }}" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-arrow-left mr-1"></i> Back to Purchase
                             </a>
                         </div>
                     </div>
 
-                    <form action="{{ route('purchases.store') }}" method="POST" id="purchaseForm">
+                    <form action="{{ route('purchases.update', $purchase) }}" method="POST" id="purchaseForm">
                         @csrf
+                        @method('PUT')
 
                         <!-- Purchase Header -->
                         <div class="card-body">
@@ -57,7 +59,7 @@
                                         <select class="form-control select2bs4 @error('vendor_id') is-invalid @enderror" name="vendor_id" style="width: 100%;" required>
                                             <option value="">Select Vendor</option>
                                             @foreach ($vendors as $vendor)
-                                            <option value="{{ $vendor->id }}" {{ old('vendor_id') == $vendor->id ? 'selected' : '' }}>
+                                            <option value="{{ $vendor->id }}" {{ old('vendor_id', $purchase->vendor_id) == $vendor->id ? 'selected' : '' }}>
                                                 {{ $vendor->name }}
                                             </option>
                                             @endforeach
@@ -77,7 +79,7 @@
                                                     <i class="fas fa-calendar text-muted"></i>
                                                 </span>
                                             </div>
-                                            <input type="date" class="form-control @error('purchase_date') is-invalid @enderror rounded-right" id="purchase_date" name="purchase_date" value="{{ old('purchase_date', date('Y-m-d')) }}" required>
+                                            <input type="date" class="form-control @error('purchase_date') is-invalid @enderror rounded-right" id="purchase_date" name="purchase_date" value="{{ old('purchase_date', $purchase->purchase_date->format('Y-m-d')) }}" required>
                                         </div>
                                         @error('purchase_date')
                                         <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -96,39 +98,48 @@
                                 </div>
 
                                 <div id="items-container">
-                                    <!-- Initial row -->
+                                    @foreach($purchase->purchaseItems as $index => $item)
                                     <div class="item-row mb-3 p-3 border rounded">
                                         <div class="row align-items-end">
                                             <div class="col-md-5">
                                                 <label class="form-label">Spare Part <span class="text-danger">*</span></label>
-                                                <select name="items[0][item_id]" required class="form-control item-select select2bs4" style="width: 100%;">
+                                                <select name="items[{{ $index }}][item_id]" required class="form-control item-select select2bs4" style="width: 100%;">
                                                     <option value="">Select Spare Part</option>
-                                                    @foreach ($items as $item)
-                                                    <option value="{{ $item->id }}" data-price="{{ $item->current_price }}">
-                                                        {{ $item->name }} ({{ $item->code }}) - Stock: {{ $item->current_stock }}
+                                                    @foreach ($items as $sparePart)
+                                                    <option value="{{ $sparePart->id }}"
+                                                        data-price="{{ $sparePart->current_price }}"
+                                                        {{ old("items.{$index}.item_id", $item->item_id) == $sparePart->id ? 'selected' : '' }}>
+                                                        {{ $sparePart->name }} ({{ $sparePart->code }}) - Stock: {{ $sparePart->current_stock }}
                                                     </option>
                                                     @endforeach
                                                 </select>
                                             </div>
                                             <div class="col-md-2">
                                                 <label class="form-label">Quantity <span class="text-danger">*</span></label>
-                                                <input type="number" name="items[0][quantity]" required min="1" class="form-control quantity-input">
+                                                <input type="number" name="items[{{ $index }}][quantity]" required min="1"
+                                                       class="form-control quantity-input"
+                                                       value="{{ old("items.{$index}.quantity", $item->quantity) }}">
                                             </div>
                                             <div class="col-md-2">
                                                 <label class="form-label">Unit Price (Rs) <span class="text-danger">*</span></label>
-                                                <input type="number" name="items[0][unit_price]" required step="0.01" min="0" class="form-control price-input">
+                                                <input type="number" name="items[{{ $index }}][unit_price]" required step="0.01" min="0"
+                                                       class="form-control price-input"
+                                                       value="{{ old("items.{$index}.unit_price", $item->unit_price) }}">
                                             </div>
                                             <div class="col-md-2">
                                                 <label class="form-label">Total (Rs)</label>
-                                                <input type="text" readonly class="form-control total-input bg-light">
+                                                <input type="text" readonly
+                                                       class="form-control total-input bg-light"
+                                                       value="Rs {{ number_format($item->quantity * $item->unit_price, 2) }}">
                                             </div>
                                             <div class="col-md-1">
-                                                <button type="button" class="btn btn-danger remove-item" disabled>
+                                                <button type="button" class="btn btn-danger remove-item" {{ $loop->first ? 'disabled' : '' }}>
                                                     <i class="fas fa-times"></i>
                                                 </button>
                                             </div>
                                         </div>
                                     </div>
+                                    @endforeach
                                 </div>
                             </div>
 
@@ -141,13 +152,17 @@
                                         </h5>
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <span class="text-muted">Items Count:</span>
-                                            <span id="itemsCount" class="font-weight-bold text-primary">1</span>
+                                            <span class="font-weight-bold text-primary">{{ $purchase->purchaseItems->count() }}</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="text-muted">Created:</span>
+                                            <span class="font-weight-bold text-muted">{{ $purchase->created_at->format('M j, Y') }}</span>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="text-right">
                                             <h4 class="font-weight-bold text-dark">Total Amount</h4>
-                                            <h2 id="totalAmount" class="font-weight-bold text-success">Rs 0.00</h2>
+                                            <h2 id="totalAmount" class="font-weight-bold text-success">Rs {{ number_format($purchase->total_amount, 2) }}</h2>
                                         </div>
                                     </div>
                                 </div>
@@ -156,7 +171,7 @@
                             <!-- Notes -->
                             <div class="form-group">
                                 <label for="notes" class="form-label">Notes</label>
-                                <textarea class="form-control @error('notes') is-invalid @enderror" id="notes" name="notes" rows="3" placeholder="Enter purchase notes">{{ old('notes') }}</textarea>
+                                <textarea class="form-control @error('notes') is-invalid @enderror" id="notes" name="notes" rows="3" placeholder="Enter purchase notes">{{ old('notes', $purchase->notes) }}</textarea>
                                 @error('notes')
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
@@ -176,7 +191,7 @@
                                         <i class="fas fa-undo mr-1"></i> Reset
                                     </button>
                                     <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-save mr-1"></i> Create Purchase
+                                        <i class="fas fa-save mr-1"></i> Update Purchase
                                     </button>
                                 </div>
                             </div>
@@ -197,16 +212,15 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Initialize Select2
         $('.select2bs4').select2({
-            theme: 'bootstrap4'
-            , placeholder: 'Select an option'
-            , allowClear: true
+            theme: 'bootstrap4',
+            placeholder: 'Select an option',
+            allowClear: true
         });
 
-        let itemCount = 1;
+        let itemCount = {{ $purchase->purchaseItems->count() }};
         const itemsContainer = document.getElementById('items-container');
         const addItemBtn = document.getElementById('addItem');
         const totalAmountSpan = document.getElementById('totalAmount');
-        const itemsCountSpan = document.getElementById('itemsCount');
 
         // Add new item row
         addItemBtn.addEventListener('click', function() {
@@ -218,9 +232,9 @@
                         <label class="form-label">Spare Part <span class="text-danger">*</span></label>
                         <select name="items[${itemCount}][item_id]" required class="form-control item-select select2bs4" style="width: 100%;">
                             <option value="">Select Spare Part</option>
-                            @foreach ($items as $item)
-                            <option value="{{ $item->id }}" data-price="{{ $item->current_price }}">
-                                {{ $item->name }} ({{ $item->code }}) - Stock: {{ $item->current_stock }}
+                            @foreach ($items as $sparePart)
+                            <option value="{{ $sparePart->id }}" data-price="{{ $sparePart->current_price }}">
+                                {{ $sparePart->name }} ({{ $sparePart->code }}) - Stock: {{ $sparePart->current_stock }}
                             </option>
                             @endforeach
                         </select>
@@ -250,15 +264,13 @@
 
             // Initialize Select2 for new row
             $(newRow).find('.select2bs4').select2({
-                theme: 'bootstrap4'
-                , placeholder: 'Select an option'
-                , allowClear: true
+                theme: 'bootstrap4',
+                placeholder: 'Select an option',
+                allowClear: true
             });
 
             itemCount++;
-            updateItemsCount();
             addEventListenersToRow(newRow);
-            updateRemoveButtons();
         });
 
         // Add event listeners to a row
@@ -288,7 +300,6 @@
                 if (document.querySelectorAll('.item-row').length > 1) {
                     row.remove();
                     calculateTotalAmount();
-                    updateItemsCount();
                     updateRemoveButtons();
                 }
             });
@@ -324,12 +335,6 @@
             totalAmountSpan.textContent = 'Rs ' + total.toFixed(2);
         }
 
-        // Update items count
-        function updateItemsCount() {
-            const count = document.querySelectorAll('.item-row').length;
-            itemsCountSpan.textContent = count;
-        }
-
         // Update remove buttons state
         function updateRemoveButtons() {
             const rows = document.querySelectorAll('.item-row');
@@ -342,7 +347,7 @@
             }
         }
 
-        // Add event listeners to initial row
+        // Add event listeners to initial rows
         document.querySelectorAll('.item-row').forEach(row => {
             addEventListenersToRow(row);
         });
@@ -350,19 +355,10 @@
         // Initialize remove buttons state
         updateRemoveButtons();
 
-        // Pre-fill item if provided in URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const itemId = urlParams.get('item_id');
-        if (itemId) {
-            const firstItemSelect = document.querySelector('.item-select');
-            firstItemSelect.value = itemId;
-            $(firstItemSelect).trigger('change');
-        }
-
         // Form validation enhancement
         $('#purchaseForm').on('submit', function() {
             $('.is-invalid').removeClass('is-invalid');
-            $('button[type="submit"]').prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-1"></i> Creating...');
+            $('button[type="submit"]').prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-1"></i> Updating...');
         });
 
         // Real-time validation for required fields
@@ -374,6 +370,5 @@
             }
         });
     });
-
 </script>
 @endpush

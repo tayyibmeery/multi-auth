@@ -14,7 +14,9 @@ class ProductionRun extends Model
         'status', 'production_date', 'completion_date', 'notes', 'user_id'
     ];
 protected $casts = [
-    'production_date' => 'datetime',
+    // 'production_date' => 'datetime',
+    'production_date' => 'date',
+    'completion_date' => 'date',
 ];
     protected static function boot()
     {

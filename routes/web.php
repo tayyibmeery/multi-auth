@@ -58,6 +58,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('purchases', PurchaseController::class);
 
     // Products - CRUD
+    Route::get('/products/low-stock', [ProductController::class, 'lowStock'])->name('products.low-stock');
+Route::get('/products/out-of-stock', [ProductController::class, 'outOfStock'])->name('products.out-of-stock');
     Route::resource('products', ProductController::class);
 
     // Bill of Materials - CRUD

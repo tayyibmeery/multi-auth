@@ -28,4 +28,14 @@ class Customer extends Model
     {
         return $this->sales->sum('due_amount');
     }
+
+public function getSalesCountAttribute()
+{
+    return $this->sales->count();
+}
+
+public function getLastSaleDateAttribute()
+{
+    return $this->sales()->latest()->first()->sale_date ?? null;
+}
 }

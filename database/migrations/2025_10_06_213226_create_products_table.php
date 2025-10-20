@@ -15,6 +15,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->decimal('selling_price', 10, 2)->default(0);
             $table->integer('current_stock')->default(0);
+             $table->integer('min_stock')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

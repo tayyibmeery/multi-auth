@@ -2,235 +2,276 @@
 
 @section("title", "Purchases Management")
 
+@push('styles')
+<!-- DataTables -->
+<link rel="stylesheet" href="{{ asset('plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
+<link rel="stylesheet" href="{{ asset('plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
+<link rel="stylesheet" href="{{ asset('plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
+@endpush
+
 @section("content")
-<div class="space-y-6">
-    <div class="flex items-center justify-between">
-        <div>
-            <h1 class="text-2xl font-bold text-gray-900">Purchases Management</h1>
-            <p class="text-gray-600">Manage purchase orders and inventory receipts</p>
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Purchases Management</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
+                    <li class="breadcrumb-item active">Purchases</li>
+                </ol>
+            </div>
         </div>
-        <a href="{{ route("purchases.create") }}" class="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700">
-            <i class="fas fa-plus mr-2"></i>Create Purchase
-        </a>
-    </div>
+    </div><!-- /.container-fluid -->
+</section>
 
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
-        <div class="rounded-lg bg-white p-4 shadow">
-            <div class="flex items-center">
-                <div class="rounded-lg bg-blue-100 p-2">
-                    <i class="fas fa-shopping-cart text-blue-600"></i>
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <!-- Statistics Cards -->
+        <div class="row">
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>{{ \App\Models\Purchase::count() }}</h3>
+                        <p>Total Purchases</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <a href="{{ route('purchases.index') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
-                <div class="ml-3">
-                    <p class="text-sm font-medium text-gray-600">Total Purchases</p>
-                    <p class="text-lg font-semibold">{{ $purchases->total() }}</p>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>Rs {{ number_format(\App\Models\Purchase::sum('total_amount'), 2) }}</h3>
+                        <p>Total Amount</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <a href="{{ route('purchases.index') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-purple">
+                    <div class="inner">
+                        <h3>{{ \App\Models\Vendor::count() }}</h3>
+                        <p>Total Vendors</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <a href="{{ route('vendors.index') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3>{{ \App\Models\Purchase::whereMonth('purchase_date', now()->month)->count() }}</h3>
+                        <p>This Month</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-calendar"></i>
+                    </div>
+                    <a href="{{ route('purchases.index') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
             </div>
         </div>
 
-        <div class="rounded-lg bg-white p-4 shadow">
-            <div class="flex items-center">
-                <div class="rounded-lg bg-green-100 p-2">
-                    <i class="fas fa-money-bill-wave text-green-600"></i>
-                </div>
-                <div class="ml-3">
-                    <p class="text-sm font-medium text-gray-600">Total Amount</p>
-                    <p class="text-lg font-semibold">Rs {{ number_format($purchases->sum("total_amount"), 2) }}</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="rounded-lg bg-white p-4 shadow">
-            <div class="flex items-center">
-                <div class="rounded-lg bg-purple-100 p-2">
-                    <i class="fas fa-truck text-purple-600"></i>
-                </div>
-                <div class="ml-3">
-                    <p class="text-sm font-medium text-gray-600">Vendors</p>
-                    <p class="text-lg font-semibold">{{ \App\Models\Vendor::count() }}</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="rounded-lg bg-white p-4 shadow">
-            <div class="flex items-center">
-                <div class="rounded-lg bg-orange-100 p-2">
-                    <i class="fas fa-calendar text-orange-600"></i>
-                </div>
-                <div class="ml-3">
-                    <p class="text-sm font-medium text-gray-600">This Month</p>
-                    <p class="text-lg font-semibold">
-                        {{ \App\Models\Purchase::whereMonth("purchase_date", now()->month)->count() }}</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Purchases Table -->
-    <div class="overflow-hidden rounded-lg bg-white shadow">
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                            Purchase No</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                            Vendor</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Date
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Spare Parts
-                            Count</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Total
-                            Amount</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                            Created By</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
-                            Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200 bg-white">
-                    @forelse($purchases as $purchase)
-                    <tr class="hover:bg-gray-50">
-                        <td class="whitespace-nowrap px-6 py-4">
-                            <div class="flex items-center">
-                                <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-green-100">
-                                    <i class="fas fa-shopping-cart text-green-600"></i>
-                                </div>
-                                <div class="ml-4">
-                                    <div class="text-sm font-medium text-gray-900">{{ $purchase->purchase_number }}
-                                    </div>
-                                    <div class="text-sm text-gray-500">
-                                        {{ $purchase->purchase_date->format("M j, Y") }}</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="whitespace-nowrap px-6 py-4">
-                            <div class="text-sm text-gray-900">{{ $purchase->vendor->name }}</div>
-                            <div class="text-sm text-gray-500">{{ $purchase->vendor->contact_person ?? "N/A" }}
-                            </div>
-                        </td>
-                        <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                            {{ $purchase->purchase_date->format("M j, Y") }}
-                        </td>
-                        <td class="whitespace-nowrap px-6 py-4">
-                            <div class="text-sm text-gray-900">{{ $purchase->purchaseItems->count() }} Spare Parts </div>
-
-                        </td>
-                        <td class="whitespace-nowrap px-6 py-4 text-sm font-semibold text-gray-900">
-                            Rs {{ number_format($purchase->total_amount, 2) }}
-                        </td>
-                        <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                            {{ $purchase->user->name }}
-                        </td>
-                        <td class="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                            <a href="{{ route("purchases.show", $purchase) }}" class="mr-3 text-blue-600 hover:text-blue-900">
-                                <i class="fas fa-eye"></i> View
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Purchases List</h3>
+                        <div class="card-tools">
+                            <a href="{{ route('purchases.create') }}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus mr-1"></i> Create Purchase
                             </a>
-                            @if (auth()->user()->isAdmin())
-                            <form action="{{ route("purchases.destroy", $purchase) }}" method="POST" class="inline" onsubmit="return confirmDelete('Are you sure you want to delete this purchase? This action cannot be undone.')">
-                                @csrf
-                                @method("DELETE")
-                                <button type="submit" class="text-red-600 hover:text-red-900">
-                                    <i class="fas fa-trash"></i> Delete
-                                </button>
-                            </form>
-                            @endif
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">
-                            No purchases found. <a href="{{ route("purchases.create") }}" class="text-blue-600 hover:text-blue-500">Create the first purchase</a>.
-                        </td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-
-        @if ($purchases->hasPages())
-        <div class="border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
-            {{ $purchases->links() }}
-        </div>
-        @endif
-    </div>
-
-    <!-- Monthly Purchase Chart -->
-    <div class="rounded-lg bg-white p-6 shadow">
-        <h3 class="mb-4 text-lg font-semibold text-gray-900">Monthly Purchase Summary ({{ now()->year }})</h3>
-        @php
-        $monthlyData = \App\Models\Purchase::select(
-        \DB::raw("MONTH(purchase_date) as month"),
-        \DB::raw("YEAR(purchase_date) as year"),
-        \DB::raw("COUNT(*) as count"),
-        \DB::raw("SUM(total_amount) as total"),
-        )
-        ->whereYear("purchase_date", now()->year)
-        ->groupBy("year", "month")
-        ->orderBy("year", "asc")
-        ->orderBy("month", "asc")
-        ->get();
-        @endphp
-
-        @if ($monthlyData->count() > 0)
-        <div class="space-y-4">
-            @foreach ($monthlyData as $data)
-            <div class="flex items-center justify-between">
-                <span class="w-24 text-sm font-medium text-gray-600">
-                    {{ DateTime::createFromFormat("!m", $data->month)->format("F") }}
-                </span>
-                <div class="mx-4 flex-1">
-                    <div class="h-3 w-full rounded-full bg-gray-200">
-                        <div class="h-3 rounded-full bg-blue-600" style="width: {{ min(($data->total / ($monthlyData->max("total") ?: 1)) * 100, 100) }}%">
                         </div>
                     </div>
-                </div>
-                <div class="w-32 text-right">
-                    <span class="text-sm font-medium text-gray-900">Rs
-                        {{ number_format($data->total, 2) }}</span>
-                    <span class="ml-2 text-xs text-gray-500">({{ $data->count }} purchases)</span>
-                </div>
-            </div>
-            @endforeach
-        </div>
-        @else
-        <p class="py-4 text-center text-gray-500">No purchase data available for this year.</p>
-        @endif
-    </div>
-
-    <!-- Top Vendors -->
-    <div class="rounded-lg bg-white p-6 shadow">
-        <h3 class="mb-4 text-lg font-semibold text-gray-900">Top Vendors</h3>
-        @php
-        $topVendors = \App\Models\Vendor::withCount("purchases")
-        ->withSum("purchases", "total_amount")
-        ->orderBy("purchases_sum_total_amount", "desc")
-        ->limit(5)
-        ->get();
-        @endphp
-
-        @if ($topVendors->count() > 0)
-        <div class="space-y-4">
-            @foreach ($topVendors as $vendor)
-            <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                    <div class="rounded-lg bg-gray-100 p-2">
-                        <i class="fas fa-building text-gray-600"></i>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <table id="purchasesTable" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Purchase Details</th>
+                                    <th>Vendor</th>
+                                    <th>Date</th>
+                                    <th>Items Count</th>
+                                    <th>Total Amount</th>
+                                    <th>Created By</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($purchases as $purchase)
+                                <tr>
+                                    <td>
+                                        <div class="font-weight-bold text-primary">{{ $purchase->purchase_number }}</div>
+                                        <small class="text-muted">
+                                            @if($purchase->notes)
+                                                {{ Str::limit($purchase->notes, 50) }}
+                                            @else
+                                                No notes
+                                            @endif
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <div class="font-weight-bold">{{ $purchase->vendor->name }}</div>
+                                        <small class="text-muted">{{ $purchase->vendor->contact_person ?? 'N/A' }}</small>
+                                    </td>
+                                    <td>{{ $purchase->purchase_date->format('M j, Y') }}</td>
+                                    <td>
+                                        <div class="font-weight-bold">{{ $purchase->purchaseItems->count() }} items</div>
+                                        <small class="text-muted">
+                                            @php
+                                                $totalQty = $purchase->purchaseItems->sum('quantity');
+                                            @endphp
+                                            {{ $totalQty }} pcs total
+                                        </small>
+                                    </td>
+                                    <td class="font-weight-bold text-success">Rs {{ number_format($purchase->total_amount, 2) }}</td>
+                                    <td>
+                                        <div class="font-weight-bold">{{ $purchase->user->name }}</div>
+                                        <small class="text-muted">{{ $purchase->created_at->format('M j, Y') }}</small>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group">
+                                            <a href="{{ route('purchases.show', $purchase) }}" class="btn btn-sm btn-info" title="View">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ route('purchases.edit', $purchase) }}" class="btn btn-sm btn-warning" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            @if (auth()->user()->isAdmin())
+                                            <form action="{{ route('purchases.destroy', $purchase) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this purchase? This action cannot be undone.')">
+                                                @csrf
+                                                @method("DELETE")
+                                                <button type="submit" class="btn btn-sm btn-danger" title="Delete">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                            @endif
+                                        </div>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="7" class="text-center py-4">
+                                        <div class="text-muted">
+                                            <i class="fas fa-shopping-cart fa-3x mb-3"></i>
+                                            <h5>No purchases found</h5>
+                                            <p>Get started by creating your first purchase</p>
+                                            <a href="{{ route('purchases.create') }}" class="btn btn-primary">
+                                                <i class="fas fa-plus mr-2"></i>Create First Purchase
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Purchase Details</th>
+                                    <th>Vendor</th>
+                                    <th>Date</th>
+                                    <th>Items Count</th>
+                                    <th>Total Amount</th>
+                                    <th>Created By</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
-                    <div class="ml-3">
-                        <p class="text-sm font-medium text-gray-900">{{ $vendor->name }}</p>
-                        <p class="text-xs text-gray-500">{{ $vendor->purchases_count }} purchases</p>
-                    </div>
+                    <!-- /.card-body -->
                 </div>
-                <span class="text-sm font-semibold text-blue-600">
-                    Rs {{ number_format($vendor->purchases_sum_total_amount, 2) }}
-                </span>
+                <!-- /.card -->
             </div>
-            @endforeach
+            <!-- /.col -->
         </div>
-        @else
-        <p class="py-4 text-center text-gray-500">No vendor data available.</p>
-        @endif
-    </div>
-</div>
+        <!-- /.row -->
+    </div><!-- /.container-fluid -->
+</section>
 @endsection
+
+@push('scripts')
+<!-- DataTables & Plugins -->
+<script src="{{ asset('plugins/datatables/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+<script src="{{ asset('plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
+<script src="{{ asset('plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
+<script src="{{ asset('plugins/datatables-buttons/js/dataTables.buttons.min.js') }}"></script>
+<script src="{{ asset('plugins/datatables-buttons/js/buttons.bootstrap4.min.js') }}"></script>
+<script src="{{ asset('plugins/jszip/jszip.min.js') }}"></script>
+<script src="{{ asset('plugins/pdfmake/pdfmake.min.js') }}"></script>
+<script src="{{ asset('plugins/pdfmake/vfs_fonts.js') }}"></script>
+<script src="{{ asset('plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
+<script src="{{ asset('plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
+<script src="{{ asset('plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
+
+<script>
+    $(function() {
+        $("#purchasesTable").DataTable({
+            "responsive": true,
+            "lengthChange": true,
+            "autoWidth": false,
+            "paging": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "buttons": [{
+                    extend: 'copy',
+                    text: '<i class="fas fa-copy mr-1"></i>Copy',
+                    className: 'btn btn-default btn-sm'
+                },
+                {
+                    extend: 'csv',
+                    text: '<i class="fas fa-file-csv mr-1"></i>CSV',
+                    className: 'btn btn-default btn-sm'
+                },
+                {
+                    extend: 'excel',
+                    text: '<i class="fas fa-file-excel mr-1"></i>Excel',
+                    className: 'btn btn-default btn-sm'
+                },
+                {
+                    extend: 'pdf',
+                    text: '<i class="fas fa-file-pdf mr-1"></i>PDF',
+                    className: 'btn btn-default btn-sm'
+                },
+                {
+                    extend: 'print',
+                    text: '<i class="fas fa-print mr-1"></i>Print',
+                    className: 'btn btn-default btn-sm'
+                },
+                {
+                    extend: 'colvis',
+                    text: '<i class="fas fa-eye mr-1"></i>Columns',
+                    className: 'btn btn-default btn-sm'
+                }
+            ],
+            "language": {
+                "search": "_INPUT_",
+                "searchPlaceholder": "Search purchases...",
+                "lengthMenu": "Show _MENU_ entries",
+                "paginate": {
+                    "previous": "<i class='fas fa-chevron-left'></i>",
+                    "next": "<i class='fas fa-chevron-right'></i>"
+                }
+            },
+            "dom": "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+                "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>" +
+                "<'row'<'col-sm-12 col-md-6'B>>",
+            "drawCallback": function() {
+                $('.dataTables_filter input').addClass('form-control form-control-sm');
+                $('.dataTables_length select').addClass('form-control form-control-sm');
+            }
+        }).buttons().container().appendTo('#purchasesTable_wrapper .col-md-6:eq(0)');
+    });
+</script>
+@endpush

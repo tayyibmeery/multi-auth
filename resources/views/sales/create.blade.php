@@ -21,7 +21,9 @@
                                     <select name="customer_id" id="customer_id" class="form-control">
                                         <option value="">Walk-in Customer</option>
                                         @foreach($customers as $customer)
-                                        <option value="{{ $customer->id }}">{{ $customer->name }}</option>
+                                        <option value="{{ $customer->id }}" {{ old('customer_id') == $customer->id ? 'selected' : '' }}>
+                                            {{ $customer->name }}
+                                        </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -29,7 +31,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="sale_date" class="form-label">Sale Date *</label>
-                                    <input type="datetime-local" name="sale_date" id="sale_date" class="form-control" value="{{ now()->format('Y-m-d\TH:i') }}" required>
+                                    <input type="datetime-local" name="sale_date" id="sale_date" class="form-control" value="{{ old('sale_date', now()->format('Y-m-d\TH:i')) }}" required>
                                 </div>
                             </div>
                         </div>
@@ -73,7 +75,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="notes" class="form-label">Notes</label>
-                                    <textarea name="notes" id="notes" class="form-control" rows="3"></textarea>
+                                    <textarea name="notes" id="notes" class="form-control" rows="3">{{ old('notes') }}</textarea>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -89,13 +91,13 @@
                                         <div class="row mb-2">
                                             <div class="col-6">Tax Amount:</div>
                                             <div class="col-6 text-end">
-                                                <input type="number" step="0.01" name="tax_amount" id="tax_amount" class="form-control form-control-sm" value="0" min="0">
+                                                <input type="number" step="0.01" name="tax_amount" id="tax_amount" class="form-control form-control-sm" value="{{ old('tax_amount', 0) }}" min="0">
                                             </div>
                                         </div>
                                         <div class="row mb-2">
                                             <div class="col-6">Discount Amount:</div>
                                             <div class="col-6 text-end">
-                                                <input type="number" step="0.01" name="discount_amount" id="discount_amount" class="form-control form-control-sm" value="0" min="0">
+                                                <input type="number" step="0.01" name="discount_amount" id="discount_amount" class="form-control form-control-sm" value="{{ old('discount_amount', 0) }}" min="0">
                                             </div>
                                         </div>
                                         <div class="row mb-2">
@@ -105,17 +107,23 @@
                                         <div class="row mb-2">
                                             <div class="col-6">Paid Amount:</div>
                                             <div class="col-6 text-end">
-                                                <input type="number" step="0.01" name="paid_amount" id="paid_amount" class="form-control form-control-sm" value="0" min="0">
+                                                <input type="number" step="0.01" name="paid_amount" id="paid_amount" class="form-control form-control-sm" value="{{ old('paid_amount', 0) }}" min="0">
                                             </div>
                                         </div>
                                         <div class="row">
+                                            <div class="col-6">Due Amount:</div>
+                                            <div class="col-6 text-end">
+                                                <strong>Rs <span id="due_amount">0.00</span></strong>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-2">
                                             <div class="col-6">Payment Method:</div>
                                             <div class="col-6 text-end">
                                                 <select name="payment_method" id="payment_method" class="form-control form-control-sm">
-                                                    <option value="cash">Cash</option>
-                                                    <option value="bank_transfer">Bank Transfer</option>
-                                                    <option value="card">Card</option>
-                                                    <option value="cheque">Cheque</option>
+                                                    <option value="cash" {{ old('payment_method', 'cash') == 'cash' ? 'selected' : '' }}>Cash</option>
+                                                    <option value="bank_transfer" {{ old('payment_method') == 'bank_transfer' ? 'selected' : '' }}>Bank Transfer</option>
+                                                    <option value="card" {{ old('payment_method') == 'card' ? 'selected' : '' }}>Card</option>
+                                                    <option value="cheque" {{ old('payment_method') == 'cheque' ? 'selected' : '' }}>Cheque</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -167,10 +175,14 @@
                             <tr>
                                 <td>{{ $product->name }}</td>
                                 <td>{{ $product->code }}</td>
-                                <td>{{ $product->current_stock }}</td>
+                                <td>
+                                    <span class="badge {{ $product->current_stock > 0 ? 'bg-success' : 'bg-danger' }}">
+                                        {{ $product->current_stock }}
+                                    </span>
+                                </td>
                                 <td>Rs {{ number_format($product->selling_price, 2) }}</td>
                                 <td>
-                                    <button type="button" class="btn btn-sm btn-primary select-product" data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}" data-product-code="{{ $product->code }}" data-product-price="{{ $product->selling_price }}" data-product-stock="{{ $product->current_stock }}">
+                                    <button type="button" class="btn btn-sm btn-primary select-product" data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}" data-product-code="{{ $product->code }}" data-product-price="{{ $product->selling_price }}" data-product-stock="{{ $product->current_stock }}" {{ $product->current_stock <= 0 ? 'disabled' : '' }}>
                                         Select
                                     </button>
                                 </td>
@@ -276,8 +288,14 @@
                 // Update quantity
                 const qtyInput = existingRow.find('.item-quantity');
                 const currentQty = parseFloat(qtyInput.val()) || 0;
-                qtyInput.val(currentQty + 1);
-                updateItemTotal(existingRow);
+                const newQty = currentQty + 1;
+
+                if (newQty <= productStock) {
+                    qtyInput.val(newQty);
+                    updateItemTotal(existingRow);
+                } else {
+                    alert('Cannot add more than available stock: ' + productStock);
+                }
             } else {
                 // Add new row
                 addNewItem(productId, productName, productCode, productPrice, productStock);
@@ -300,12 +318,23 @@
         // Update quantities and prices
         $(document).on('input', '.item-quantity, .item-price', function() {
             const row = $(this).closest('tr');
+            const maxStock = row.data('max-stock');
+            const quantity = parseFloat(row.find('.item-quantity').val()) || 0;
+
+            // Validate stock
+            if (quantity > maxStock) {
+                alert('Cannot exceed available stock: ' + maxStock);
+                row.find('.item-quantity').val(maxStock);
+            }
+
             updateItemTotal(row);
             updateTotals();
         });
 
-        // Update totals when tax/discount changes
-        $('#tax_amount, #discount_amount').on('input', updateTotals);
+        // Update totals when tax/discount/paid amount changes
+        $('#tax_amount, #discount_amount, #paid_amount').on('input', function() {
+            updateTotals();
+        });
 
         // Form validation
         $('#saleForm').on('submit', function(e) {
@@ -314,6 +343,20 @@
                 alert('Please add at least one item to the sale.');
                 return false;
             }
+
+            // Validate paid amount doesn't exceed total
+            const totalAmount = parseFloat($('#total_amount').text()) || 0;
+            const paidAmount = parseFloat($('#paid_amount').val()) || 0;
+
+            if (paidAmount > totalAmount) {
+                e.preventDefault();
+                alert('Paid amount cannot exceed total amount.');
+                $('#paid_amount').focus();
+                return false;
+            }
+
+            // Show loading state
+            $('button[type="submit"]').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i> Creating...');
         });
 
         function addNewItem(productId, productName, productCode, productPrice, productStock) {
@@ -321,7 +364,7 @@
             const rowIndex = itemCount;
 
             const rowHtml = `
-                <tr id="${rowId}" data-product-id="${productId}" class="item-row">
+                <tr id="${rowId}" data-product-id="${productId}" data-max-stock="${productStock}" class="item-row">
                     <td>
                         <strong>${productName}</strong><br>
                         <small class="text-muted">Code: ${productCode}</small>
@@ -338,7 +381,9 @@
                                class="form-control form-control-sm item-price"
                                value="${productPrice}" min="0" required>
                     </td>
-                    <td class="item-total">${parseFloat(productPrice).toFixed(2)}</td>
+                    <td>
+                        <span class="item-total">${(1 * productPrice).toFixed(2)}</span>
+                    </td>
                     <td>
                         <button type="button" class="btn btn-sm btn-danger remove-item">
                             <i class="fas fa-trash"></i>
@@ -362,27 +407,47 @@
         function updateTotals() {
             let subtotal = 0;
 
+            // Calculate subtotal from all items
             $('.item-row').each(function() {
-                const total = parseFloat($(this).find('.item-total').text()) || 0;
-                subtotal += total;
+                const quantity = parseFloat($(this).find('.item-quantity').val()) || 0;
+                const price = parseFloat($(this).find('.item-price').val()) || 0;
+                const itemTotal = quantity * price;
+                subtotal += itemTotal;
             });
 
             const taxAmount = parseFloat($('#tax_amount').val()) || 0;
             const discountAmount = parseFloat($('#discount_amount').val()) || 0;
-            const totalAmount = subtotal + taxAmount - discountAmount;
+            const paidAmount = parseFloat($('#paid_amount').val()) || 0;
 
+            const totalAmount = subtotal + taxAmount - discountAmount;
+            const dueAmount = totalAmount - paidAmount;
+
+            // Update display
             $('#subtotal').text(subtotal.toFixed(2));
             $('#total_amount').text(totalAmount.toFixed(2));
+            $('#due_amount').text(dueAmount.toFixed(2));
+
+            // Update due amount color
+            if (dueAmount > 0) {
+                $('#due_amount').addClass('text-danger').removeClass('text-success');
+            } else {
+                $('#due_amount').addClass('text-success').removeClass('text-danger');
+            }
         }
 
         function checkEmptyCart() {
             if ($('.item-row').length === 0) {
                 $('#emptyCartMessage').show();
+            } else {
+                $('#emptyCartMessage').hide();
             }
         }
 
         // Initial check
         checkEmptyCart();
+
+        // Initialize totals on page load
+        updateTotals();
     });
 
 </script>

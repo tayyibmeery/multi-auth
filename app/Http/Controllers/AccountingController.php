@@ -5,30 +5,33 @@ namespace App\Http\Controllers;
 use App\Models\Account;
 use App\Models\AccountingVoucher;
 use App\Models\Expense;
+use App\Models\Product;
 use App\Models\Sale;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class AccountingController extends Controller
 {
-    public function dashboard()
-    {
-        $totalSales = Sale::where('sale_status', 'completed')->sum('total_amount');
-        $totalExpenses = Expense::sum('amount');
-        $cashBalance = Account::where('code', '1000')->first()->current_balance;
-        $bankBalance = Account::where('code', '1300')->first()->current_balance;
+  public function dashboard()
+{
+    $totalSales = Sale::where('sale_status', 'completed')->sum('total_amount');
+    $totalExpenses = Expense::sum('amount');
+    $cashBalance = Account::where('code', '1000')->first()->current_balance;
+    $bankBalance = Account::where('code', '1300')->first()->current_balance;
+  $products = Product::all();
+    $recentVouchers = AccountingVoucher::with(['account', 'user'])
+        ->orderBy('voucher_date', 'desc')
+        ->take(10)
+        ->get();
 
-        $recentVouchers = AccountingVoucher::with(['account', 'user'])
-            ->orderBy('voucher_date', 'desc')
-            ->take(10)
-            ->get();
+    // Add customers for the sales form
+    $customers = \App\Models\Customer::orderBy('name')->get();
 
-        return view('accounting.dashboard', compact(
-            'totalSales', 'totalExpenses', 'cashBalance',
-            'bankBalance', 'recentVouchers'
-        ));
-    }
-
+    return view('accounting.dashboard', compact(
+        'totalSales', 'totalExpenses', 'cashBalance',
+        'bankBalance', 'recentVouchers', 'customers','products'
+    ));
+}
     public function trialBalance()
     {
         $accounts = Account::with(['debitVouchers', 'creditVouchers'])->get();

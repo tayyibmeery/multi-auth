@@ -128,7 +128,7 @@
         </div>
         <!-- /.row -->
 
-        <!-- Third Row Stats -->
+        <!-- Third Row Stats - Accounting Focus -->
         <div class="row">
             <div class="col-lg-3 col-6">
                 <div class="small-box bg-gradient-teal">
@@ -159,26 +159,26 @@
             <div class="col-lg-3 col-6">
                 <div class="small-box bg-gradient-purple">
                     <div class="inner">
-                        <h3>{{ $stats["total_vendors"] ?? 0 }}</h3>
-                        <p>Total Vendors</p>
+                        <h3>Rs {{ number_format($accountingStats['cash_balance'] ?? 0, 2) }}</h3>
+                        <p>Cash Balance</p>
                     </div>
                     <div class="icon">
-                        <i class="fas fa-truck"></i>
+                        <i class="fas fa-wallet"></i>
                     </div>
-                    <a href="{{ route('vendors.index') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                    <a href="{{ route('accounting.balance-sheet') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
             </div>
             <!-- ./col -->
             <div class="col-lg-3 col-6">
                 <div class="small-box bg-gradient-maroon">
                     <div class="inner">
-                        <h3>{{ $stats["total_employees"] ?? 0 }}</h3>
-                        <p>Total Employees</p>
+                        <h3>Rs {{ number_format($accountingStats['bank_balance'] ?? 0, 2) }}</h3>
+                        <p>Bank Balance</p>
                     </div>
                     <div class="icon">
-                        <i class="fas fa-user-tie"></i>
+                        <i class="fas fa-university"></i>
                     </div>
-                    <a href="{{ route('employees.index') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                    <a href="{{ route('accounting.balance-sheet') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
             </div>
             <!-- ./col -->
@@ -221,8 +221,8 @@
                                 <tbody>
                                     @foreach($recentSales as $sale)
                                     <tr>
-                                        <td>{{ $sale->invoice_number }}</td>
-                                        <td>{{ $sale->customer->name }}</td>
+                                        <td>{{ $sale->sale_number }}</td>
+                                        <td>{{ $sale->customer->name ?? 'Walk-in Customer' }}</td>
                                         <td>Rs {{ number_format($sale->total_amount, 2) }}</td>
                                         <td>{{ $sale->created_at->format('M j, Y') }}</td>
                                     </tr>
@@ -238,6 +238,63 @@
                     <div class="card-footer text-center">
                         <a href="{{ route('sales.index') }}" class="btn btn-sm btn-default">
                             View All Sales
+                        </a>
+                    </div>
+                </div>
+                <!-- /.card -->
+
+                <!-- Recent Accounting Vouchers -->
+                <div class="card card-info">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-file-invoice-dollar mr-1"></i>
+                            Recent Accounting Vouchers
+                        </h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        @if($recentVouchers->count() > 0)
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Voucher #</th>
+                                        <th>Date</th>
+                                        <th>Account</th>
+                                        <th>Debit</th>
+                                        <th>Credit</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($recentVouchers as $voucher)
+                                    <tr>
+                                        <td>{{ $voucher->voucher_number }}</td>
+                                        <td>{{ $voucher->voucher_date->format('M d, Y') }}</td>
+                                        <td>{{ $voucher->account->name }}</td>
+                                        <td class="{{ $voucher->debit > 0 ? 'text-danger' : '' }}">
+                                            {{ $voucher->debit > 0 ? 'Rs ' . number_format($voucher->debit, 2) : '-' }}
+                                        </td>
+                                        <td class="{{ $voucher->credit > 0 ? 'text-success' : '' }}">
+                                            {{ $voucher->credit > 0 ? 'Rs ' . number_format($voucher->credit, 2) : '-' }}
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        @else
+                        <p class="text-center text-muted py-3">No recent vouchers</p>
+                        @endif
+                    </div>
+                    <!-- /.card-body -->
+                    <div class="card-footer text-center">
+                        <a href="{{ route('accounting.dashboard') }}" class="btn btn-sm btn-default">
+                            View Accounting
                         </a>
                     </div>
                 </div>
@@ -284,49 +341,6 @@
                     </div>
                 </div>
                 <!-- /.card -->
-
-                <!-- Inventory Health -->
-                <div class="card card-warning">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                            <i class="fas fa-heartbeat mr-1"></i>
-                            Inventory Health
-                        </h3>
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body">
-                        @php
-                        $totalItems = $stats["total_items"] ?? 1;
-                        $healthyCount = $totalItems - count($lowStockItems);
-                        $healthyPercentage = ($healthyCount / $totalItems) * 100;
-                        $lowStockPercentage = (count($lowStockItems) / $totalItems) * 100;
-                        @endphp
-                        <div class="progress mb-3" style="height: 25px;">
-                            <div class="progress-bar bg-success" style="width: {{ $healthyPercentage }}%">
-                                <strong>Healthy: {{ $healthyCount }}</strong>
-                            </div>
-                            <div class="progress-bar bg-danger" style="width: {{ $lowStockPercentage }}%">
-                                <strong>Low Stock: {{ count($lowStockItems) }}</strong>
-                            </div>
-                        </div>
-                        <div class="row text-center">
-                            <div class="col-6">
-                                <h4 class="text-success">{{ number_format($healthyPercentage, 1) }}%</h4>
-                                <small class="text-muted">Healthy Items</small>
-                            </div>
-                            <div class="col-6">
-                                <h4 class="text-danger">{{ number_format($lowStockPercentage, 1) }}%</h4>
-                                <small class="text-muted">Low Stock Items</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- /.card -->
             </section>
             <!-- /.Left col -->
 
@@ -355,6 +369,14 @@
                             <div class="col-6">
                                 <h5 class="text-danger">Rs {{ number_format($stats['total_expenses'] ?? 0, 2) }}</h5>
                                 <small class="text-muted">Total Expenses</small>
+                            </div>
+                            <div class="col-6 border-right border-top">
+                                <h5 class="text-info">Rs {{ number_format($accountingStats['cash_balance'] ?? 0, 2) }}</h5>
+                                <small class="text-muted">Cash Balance</small>
+                            </div>
+                            <div class="col-6 border-top">
+                                <h5 class="text-primary">Rs {{ number_format($accountingStats['bank_balance'] ?? 0, 2) }}</h5>
+                                <small class="text-muted">Bank Balance</small>
                             </div>
                             <div class="col-12 mt-3 pt-3 border-top">
                                 @php
@@ -471,43 +493,6 @@
                 </div>
                 <!-- /.card -->
 
-                <!-- Performance Metrics -->
-                <div class="card card-dark">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                            <i class="fas fa-tachometer-alt mr-1"></i>
-                            Performance Metrics
-                        </h3>
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body">
-                        <div class="row text-center">
-                            <div class="col-6 border-right">
-                                <h5>{{ number_format($performance['stock_turnover'] ?? 2.5, 2) }}</h5>
-                                <small class="text-muted">Stock Turnover</small>
-                            </div>
-                            <div class="col-6">
-                                <h5>{{ $performance['order_fulfillment_rate'] ?? 95 }}%</h5>
-                                <small class="text-muted">Fulfillment Rate</small>
-                            </div>
-                            <div class="col-6 border-right border-top">
-                                <h5>{{ $performance['production_efficiency'] ?? 88 }}%</h5>
-                                <small class="text-muted">Production Efficiency</small>
-                            </div>
-                            <div class="col-6 border-top">
-                                <h5>{{ $performance['customer_satisfaction'] ?? 92 }}%</h5>
-                                <small class="text-muted">Customer Satisfaction</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- /.card -->
-
                 <!-- Quick Actions -->
                 <div class="card card-success">
                     <div class="card-header">
@@ -535,8 +520,8 @@
                                 </a>
                             </div>
                             <div class="col-6">
-                                <a href="{{ route('items.create') }}" class="btn btn-app bg-primary">
-                                    <i class="fas fa-box"></i> Add Item
+                                <a href="{{ route('accounting.dashboard') }}" class="btn btn-app bg-primary">
+                                    <i class="fas fa-chart-bar"></i> Accounting
                                 </a>
                             </div>
                         </div>

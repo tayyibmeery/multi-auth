@@ -11,6 +11,9 @@ use App\Models\Sale;
 use App\Models\Customer;
 use App\Models\Expense;
 use App\Models\User;
+use App\Models\Account;
+use App\Models\AccountingVoucher;
+use App\Models\Employee;
 use Illuminate\Http\Request;
 use DB;
 
@@ -18,6 +21,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        // Basic Stats
         $stats = [
             'total_items' => Item::count(),
             'total_products' => Product::count(),
@@ -26,8 +30,17 @@ class DashboardController extends Controller
             'total_production_runs' => ProductionRun::count(),
             'total_sales' => Sale::count(),
             'total_customers' => Customer::count(),
-
             'total_expenses' => Expense::sum('amount'),
+            'total_employees' => Employee::count(),
+            'total_revenue' => Sale::where('sale_status', 'completed')->sum('total_amount'),
+        ];
+
+        // Accounting Stats
+        $accountingStats = [
+            'cash_balance' => Account::where('code', '1000')->first()->current_balance ?? 0,
+            'bank_balance' => Account::where('code', '1300')->first()->current_balance ?? 0,
+            'total_accounts' => Account::where('is_active', true)->count(),
+            'recent_vouchers_count' => AccountingVoucher::count(),
         ];
 
         // Low stock items
@@ -54,6 +67,12 @@ class DashboardController extends Controller
                         ->limit(5)
                         ->get();
 
+        // Recent accounting vouchers
+        $recentVouchers = AccountingVoucher::with(['account', 'user'])
+                                ->latest()
+                                ->limit(5)
+                                ->get();
+
         // Stock value
         $totalStockValue = DB::table('items')
                             ->select(DB::raw('SUM(current_stock * current_price) as total'))
@@ -75,17 +94,30 @@ class DashboardController extends Controller
         $expenseByCategory = Expense::select('category', DB::raw('SUM(amount) as total'))
             ->groupBy('category')
             ->get();
-$outOfStockItems = Item::where('current_stock', '<=', 0)->count();
+
+        $outOfStockItems = Item::where('current_stock', '<=', 0)->count();
+
+        // Performance metrics (you can replace with actual calculations)
+        $performance = [
+            'stock_turnover' => 2.5,
+            'order_fulfillment_rate' => 95,
+            'production_efficiency' => 88,
+            'customer_satisfaction' => 92,
+        ];
 
         return view('dashboard', compact(
             'stats',
+            'accountingStats',
             'lowStockItems',
             'recentPurchases',
             'recentProductions',
             'recentSales',
+            'recentVouchers',
             'totalStockValue',
             'monthlySales',
             'expenseByCategory',
+            'outOfStockItems',
+            'performance'
         ));
     }
 
@@ -105,6 +137,18 @@ $outOfStockItems = Item::where('current_stock', '<=', 0)->count();
             'total_sales' => Sale::count(),
             'total_customers' => Customer::count(),
             'total_expenses' => Expense::sum('amount'),
+            'total_employees' => Employee::count(),
+            'total_revenue' => Sale::where('sale_status', 'completed')->sum('total_amount'),
+        ];
+
+        // Accounting Stats for Admin
+        $accountingStats = [
+            'cash_balance' => Account::where('code', '1000')->first()->current_balance ?? 0,
+            'bank_balance' => Account::where('code', '1300')->first()->current_balance ?? 0,
+            'total_accounts' => Account::where('is_active', true)->count(),
+            'recent_vouchers_count' => AccountingVoucher::count(),
+            'total_assets' => Account::where('type', 'asset')->sum('current_balance'),
+            'total_liabilities' => Account::where('type', 'liability')->sum('current_balance'),
         ];
 
         // Monthly purchase data for chart
@@ -149,6 +193,12 @@ $outOfStockItems = Item::where('current_stock', '<=', 0)->count();
                         ->limit(5)
                         ->get();
 
+        // Recent accounting vouchers
+        $recentVouchers = AccountingVoucher::with(['account', 'user'])
+                                ->latest()
+                                ->limit(5)
+                                ->get();
+
         // Expense by category
         $expenseByCategory = Expense::select('category', DB::raw('SUM(amount) as total'))
             ->groupBy('category')
@@ -161,11 +211,13 @@ $outOfStockItems = Item::where('current_stock', '<=', 0)->count();
 
         return view('admin.dashboard', compact(
             'stats',
+            'accountingStats',
             'monthlyPurchases',
             'monthlySales',
             'topVendors',
             'topCustomers',
             'recentSales',
+            'recentVouchers',
             'expenseByCategory',
             'totalStockValue'
         ));

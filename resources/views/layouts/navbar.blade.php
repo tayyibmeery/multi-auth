@@ -1,6 +1,8 @@
 <!-- Navbar -->
-<nav class="main-header navbar navbar-expand @auth navbar-white navbar-light @else navbar-custom @endauth">
+{{-- <nav class="main-header navbar navbar-expand @auth navbar-white navbar-light @else navbar-custom @endauth"> --}}
     <!-- Left navbar links -->
+    <nav class="main-header navbar navbar-expand @auth navbar-white navbar-light @else navbar-custom @endauth" id="main-navbar">
+
     <ul class="navbar-nav">
         @auth
         <li class="nav-item">
@@ -178,11 +180,18 @@
                 <i class="fas fa-expand-arrows-alt"></i>
             </a>
         </li>
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a class="nav-link" data-widget="control-sidebar" data-controlsidebar-slide="true" href="#" role="button">
                 <i class="fas fa-th-large"></i>
             </a>
+        </li> --}}
+
+        <li class="nav-item">
+            <a class="nav-link" href="#" id="dark-mode-toggle" role="button">
+                <i class="fas fa-moon"></i>
+            </a>
         </li>
+
         @else
         <!-- For non-authenticated users -->
         <li class="nav-item">

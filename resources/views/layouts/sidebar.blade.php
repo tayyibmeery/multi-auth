@@ -1,38 +1,27 @@
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <a href="{{ route('dashboard') }}" class="brand-link text-center">
+    <a href="{{ route('dashboard') }}" class="brand-link text-center  ">
         <i class="fas fa-warehouse brand-icon"></i>
         <span class="brand-text font-weight-light">Inventory System</span>
     </a>
 
     <!-- Sidebar -->
     <div class="sidebar">
-        <!-- Sidebar user panel (optional) -->
-        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <!-- Sidebar user panel -->
+        {{-- <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image">
                 <img src="{{ asset('dist/img/user2-160x160.jpg') }}" class="img-circle elevation-2" alt="User Image">
             </div>
             <div class="info">
                 <a href="#" class="d-block">{{ auth()->user()->name ?? 'Alexander Pierce' }}</a>
             </div>
-        </div>
-
-        <!-- SidebarSearch Form -->
-        {{-- <div class="form-inline">
-            <div class="input-group" data-widget="sidebar-search">
-                <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
-                <div class="input-group-append">
-                    <button class="btn btn-sidebar">
-                        <i class="fas fa-search fa-fw"></i>
-                    </button>
-                </div>
-            </div>
         </div> --}}
 
         <!-- Sidebar Menu -->
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+
                 <!-- Dashboard -->
                 <li class="nav-item">
                     <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
@@ -41,39 +30,13 @@
                     </a>
                 </li>
 
-                @if(auth()->user()->isAdmin())
-                <!-- Admin Menu -->
-                <li class="nav-header">ADMINISTRATION</li>
-                <li class="nav-item">
-                    <a href="{{ route('vendors.index') }}" class="nav-link {{ request()->routeIs('vendors.*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-truck"></i>
-                        <p>Vendors</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('categories.index') }}" class="nav-link {{ request()->routeIs('categories.*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-tags"></i>
-                        <p>Categories</p>
-                    </a>
-                </li>
-                @endif
-
-                <!-- Inventory Management -->
-                <li class="nav-header">INVENTORY MANAGEMENT</li>
+                <!-- INVENTORY -->
+                <li class="nav-header">INVENTORY</li>
 
                 <li class="nav-item">
                     <a href="{{ route('items.index') }}" class="nav-link {{ request()->routeIs('items.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-boxes"></i>
                         <p>Spare Parts</p>
-                    </a>
-                </li>
-
-                
-
-                <li class="nav-item">
-                    <a href="{{ route('vendors.index') }}" class="nav-link {{ request()->routeIs('vendors.*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-truck"></i>
-                        <p>Vendors</p>
                     </a>
                 </li>
 
@@ -84,13 +47,36 @@
                     </a>
                 </li>
 
-                <!-- Operations -->
+                @if(auth()->user()->isAdmin())
+                <li class="nav-item">
+                    <a href="{{ route('categories.index') }}" class="nav-link {{ request()->routeIs('categories.*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-tags"></i>
+                        <p>Categories</p>
+                    </a>
+                </li>
+                @endif
+
+                <li class="nav-item">
+                    <a href="{{ route('stock-ledgers.index') }}" class="nav-link {{ request()->routeIs('stock-ledgers.*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-history"></i>
+                        <p>Stock Ledger</p>
+                    </a>
+                </li>
+
+                <!-- OPERATIONS -->
                 <li class="nav-header">OPERATIONS</li>
 
                 <li class="nav-item">
                     <a href="{{ route('purchases.index') }}" class="nav-link {{ request()->routeIs('purchases.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-shopping-cart"></i>
                         <p>Purchases</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{{ route('vendors.index') }}" class="nav-link {{ request()->routeIs('vendors.*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-truck"></i>
+                        <p>Vendors</p>
                     </a>
                 </li>
 
@@ -108,14 +94,16 @@
                     </a>
                 </li>
 
-                <!-- Sales Menu -->
+                <!-- SALES -->
                 <li class="nav-header">SALES</li>
+
                 <li class="nav-item">
                     <a href="{{ route('sales.index') }}" class="nav-link {{ request()->routeIs('sales.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-cash-register"></i>
                         <p>Sales</p>
                     </a>
                 </li>
+
                 <li class="nav-item">
                     <a href="{{ route('customers.index') }}" class="nav-link {{ request()->routeIs('customers.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-users"></i>
@@ -123,16 +111,18 @@
                     </a>
                 </li>
 
-                <!-- Accounting Menu -->
+                <!-- ACCOUNTING -->
                 <li class="nav-header">ACCOUNTING</li>
+
                 <li class="nav-item">
-                    <a href="{{ route('accounting.dashboard') }}" class="nav-link {{ request()->routeIs('accounting.*') ? 'active' : '' }}">
+                    <a href="{{ route('accounting.dashboard') }}" class="nav-link {{ request()->routeIs('accounting.dashboard') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-chart-line"></i>
                         <p>Accounting Dashboard</p>
                     </a>
                 </li>
-                <li class="nav-item {{ request()->routeIs('accounting.reports.*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ request()->routeIs('accounting.reports.*') ? 'active' : '' }}">
+
+                <li class="nav-item {{ request()->routeIs('accounting.trial-balance') || request()->routeIs('accounting.income-statement') || request()->routeIs('accounting.balance-sheet') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->routeIs('accounting.trial-balance') || request()->routeIs('accounting.income-statement') || request()->routeIs('accounting.balance-sheet') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-file-invoice-dollar"></i>
                         <p>
                             Financial Reports
@@ -160,34 +150,36 @@
                         </li>
                     </ul>
                 </li>
+
+                <li class="nav-item">
+                    <a href="{{ route('accounting.vouchers') }}" class="nav-link {{ request()->routeIs('accounting.vouchers*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-receipt"></i>
+                        <p>Vouchers</p>
+                    </a>
+                </li>
+
                 <li class="nav-item">
                     <a href="{{ route('expenses.index') }}" class="nav-link {{ request()->routeIs('expenses.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-money-bill-wave"></i>
                         <p>Expenses</p>
                     </a>
                 </li>
+
                 <li class="nav-item">
-                    <a href="{{ route('employees.index') }}" class="nav-link {{ request()->routeIs('employees.*') ? 'active' : '' }}">
+                    <a href="{{ route('employees.index') }}" class="nav-link {{ request()->routeIs('employees.*') || request()->routeIs('salaries.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-user-tie"></i>
                         <p>Employees</p>
                     </a>
                 </li>
 
-                <!-- Reports -->
+                <!-- REPORTS -->
                 <li class="nav-header">REPORTS</li>
-
-                <li class="nav-item">
-                    <a href="{{ route('stock-ledgers.index') }}" class="nav-link {{ request()->routeIs('stock-ledgers.*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-history"></i>
-                        <p>Stock Ledger</p>
-                    </a>
-                </li>
 
                 <li class="nav-item {{ request()->routeIs('reports.*') ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link {{ request()->routeIs('reports.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-chart-bar"></i>
                         <p>
-                            Inventory Reports
+                            Reports
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
@@ -216,57 +208,27 @@
                                 <p>Sales Report</p>
                             </a>
                         </li>
-                    </ul>
-                </li>
-
-                {{-- <!-- Additional AdminLTE Menu Items (preserved from original) -->
-                <li class="nav-item">
-                    <a href="pages/widgets.html" class="nav-link">
-                        <i class="nav-icon fas fa-th"></i>
-                        <p>
-                            Widgets
-                            <span class="right badge badge-danger">New</span>
-                        </p>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-copy"></i>
-                        <p>
-                            Layout Options
-                            <i class="fas fa-angle-left right"></i>
-                            <span class="badge badge-info right">6</span>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="pages/layout/top-nav.html" class="nav-link">
+                            <a href="{{ route('reports.purchases') }}" class="nav-link {{ request()->routeIs('reports.purchases') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>Top Navigation</p>
+                                <p>Purchase Report</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="pages/layout/top-nav-sidebar.html" class="nav-link">
+                            <a href="{{ route('reports.production') }}" class="nav-link {{ request()->routeIs('reports.production') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>Top Navigation + Sidebar</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="pages/layout/boxed.html" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Boxed</p>
+                                <p>Production Report</p>
                             </a>
                         </li>
                     </ul>
-                </li> --}}
+                </li>
 
-
-                <!-- Website Management -->
-                <li class="nav-header">WEBSITE MANAGEMENT</li>
+                @if(auth()->user()->isAdmin())
+                <!-- WEBSITE -->
+                <li class="nav-header">WEBSITE</li>
 
                 <li class="nav-item">
-                    <a href="{{ route('admin.website.dashboard') }}" class="nav-link {{ request()->routeIs('admin.website.*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.website.dashboard') }}" class="nav-link {{ request()->routeIs('admin.website.dashboard') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-globe"></i>
                         <p>Website Dashboard</p>
                     </a>
@@ -290,13 +252,14 @@
                     <a href="{{ route('admin.messages.index') }}" class="nav-link {{ request()->routeIs('admin.messages.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-envelope"></i>
                         <p>
-                            Contact Messages
+                            Messages
                             @if($unreadMessagesCount > 0)
                             <span class="right badge badge-danger">{{ $unreadMessagesCount }}</span>
                             @endif
                         </p>
                     </a>
                 </li>
+                @endif
 
             </ul>
         </nav>

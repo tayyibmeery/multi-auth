@@ -150,9 +150,58 @@
     <!-- AdminLTE App -->
     <script src="{{ asset('dist/js/adminlte.js') }}"></script>
     <!-- AdminLTE for demo purposes -->
-    <script src="{{ asset('dist/js/demo.js') }}"></script>
+    {{-- <script src="{{ asset('dist/js/demo.js') }}"></script> --}}
     <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
     <script src="{{ asset('dist/js/pages/dashboard.js') }}"></script>
+<script>
+    $(document).ready(function() {
+        function updateNavbarForDarkMode(isDark) {
+            const $navbar = $('#main-navbar');
+
+            if (isDark) {
+                // Switch to dark navbar
+                $navbar.removeClass('navbar-white navbar-light').addClass('navbar-dark navbar-gray-dark');
+                // Update all nav links for better contrast in dark mode
+                $('.nav-link').css('color', '#ffffff');
+                $('.navbar-brand').css('color', '#ffffff');
+            } else {
+                // Switch to light navbar
+                $navbar.removeClass('navbar-dark navbar-gray-dark').addClass('navbar-white navbar-light');
+                // Reset nav links to default
+                $('.nav-link').css('color', '');
+                $('.navbar-brand').css('color', '');
+            }
+        }
+
+        $('#dark-mode-toggle').on('click', function(e) {
+            e.preventDefault();
+            var $icon = $(this).find('i');
+
+            if ($('body').hasClass('dark-mode')) {
+                $('body').removeClass('dark-mode');
+                $icon.removeClass('fa-sun').addClass('fa-moon');
+                updateNavbarForDarkMode(false);
+                document.cookie = "dark_mode=false; path=/; max-age=" + (60 * 60 * 24 * 365);
+            } else {
+                $('body').addClass('dark-mode');
+                $icon.removeClass('fa-moon').addClass('fa-sun');
+                updateNavbarForDarkMode(true);
+                document.cookie = "dark_mode=true; path=/; max-age=" + (60 * 60 * 24 * 365);
+            }
+        });
+
+        // Initialize on page load
+        if ($('body').hasClass('dark-mode')) {
+            $('#dark-mode-toggle i').removeClass('fa-moon').addClass('fa-sun');
+            updateNavbarForDarkMode(true);
+        } else {
+            updateNavbarForDarkMode(false);
+        }
+    });
+
+</script>
+
+
 
     @stack('scripts')
 

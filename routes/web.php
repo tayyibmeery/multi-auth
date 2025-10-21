@@ -89,6 +89,8 @@ Route::get('/products/out-of-stock', [ProductController::class, 'outOfStock'])->
         Route::get('income-statement', [AccountingController::class, 'incomeStatement'])->name('income-statement');
         Route::get('balance-sheet', [AccountingController::class, 'balanceSheet'])->name('balance-sheet');
         Route::get('vouchers', [AccountingController::class, 'vouchers'])->name('vouchers');
+         Route::get('vouchers/create', [AccountingController::class, 'createVoucher'])->name('vouchers.create');
+    Route::post('vouchers', [AccountingController::class, 'storeVoucher'])->name('vouchers.store');
     });
 
     // Expense Routes

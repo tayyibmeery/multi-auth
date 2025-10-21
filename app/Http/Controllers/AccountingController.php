@@ -12,26 +12,98 @@ use Illuminate\Support\Facades\DB;
 
 class AccountingController extends Controller
 {
-  public function dashboard()
-{
-    $totalSales = Sale::where('sale_status', 'completed')->sum('total_amount');
-    $totalExpenses = Expense::sum('amount');
-    $cashBalance = Account::where('code', '1000')->first()->current_balance;
-    $bankBalance = Account::where('code', '1300')->first()->current_balance;
-  $products = Product::all();
-    $recentVouchers = AccountingVoucher::with(['account', 'user'])
-        ->orderBy('voucher_date', 'desc')
-        ->take(10)
-        ->get();
+    public function dashboard()
+    {
+        $totalSales = Sale::where('sale_status', 'completed')->sum('total_amount');
+        $totalExpenses = Expense::sum('amount');
+        $cashBalance = Account::where('code', '1000')->first()->current_balance ?? 0;
+        $bankBalance = Account::where('code', '1300')->first()->current_balance ?? 0;
+        $products = Product::all();
 
-    // Add customers for the sales form
-    $customers = \App\Models\Customer::orderBy('name')->get();
+        $recentVouchers = AccountingVoucher::with(['account', 'user'])
+            ->orderBy('voucher_date', 'desc')
+            ->take(10)
+            ->get();
 
-    return view('accounting.dashboard', compact(
-        'totalSales', 'totalExpenses', 'cashBalance',
-        'bankBalance', 'recentVouchers', 'customers','products'
-    ));
-}
+        // Add customers for the sales form
+        $customers = \App\Models\Customer::orderBy('name')->get();
+
+        return view('accounting.dashboard', compact(
+            'totalSales', 'totalExpenses', 'cashBalance',
+            'bankBalance', 'recentVouchers', 'customers','products'
+        ));
+    }
+
+    /**
+     * Display all accounting vouchers
+     */
+    public function vouchers()
+    {
+        $vouchers = AccountingVoucher::with(['account', 'user'])
+            ->orderBy('voucher_date', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->paginate(20);
+
+        return view('accounting.vouchers', compact('vouchers'));
+    }
+
+    /**
+     * Show the form for creating a new voucher
+     */
+    public function createVoucher()
+    {
+        $accounts = Account::where('is_active', true)->orderBy('name')->get();
+        return view('accounting.vouchers-create', compact('accounts'));
+    }
+
+    /**
+     * Store a new voucher
+     */
+    public function storeVoucher(Request $request)
+    {
+        $validated = $request->validate([
+            'voucher_date' => 'required|date',
+            'account_id' => 'required|exists:accounts,id',
+            'debit' => 'required_without:credit|numeric|min:0',
+            'credit' => 'required_without:debit|numeric|min:0',
+            'description' => 'required|string|max:500',
+            'reference' => 'nullable|string|max:255',
+        ]);
+
+        // Ensure only one of debit or credit is provided
+        if ($request->has('debit') && $request->has('credit')) {
+            return back()->withErrors(['error' => 'Please provide either debit or credit, not both.']);
+        }
+
+        // Generate voucher number
+        $voucherNumber = 'VCH-' . date('Ymd') . '-' . str_pad(AccountingVoucher::whereDate('created_at', today())->count() + 1, 4, '0', STR_PAD_LEFT);
+
+        $voucher = AccountingVoucher::create([
+            'voucher_number' => $voucherNumber,
+            'voucher_date' => $validated['voucher_date'],
+            'account_id' => $validated['account_id'],
+            'debit' => $validated['debit'] ?? 0,
+            'credit' => $validated['credit'] ?? 0,
+            'description' => $validated['description'],
+            'reference' => $validated['reference'],
+            'user_id' => auth()->id(),
+        ]);
+
+        // Update account balance
+        $account = Account::find($validated['account_id']);
+        if ($account) {
+            if ($validated['debit'] > 0) {
+                $account->current_balance += $validated['debit'];
+            } else {
+                $account->current_balance -= $validated['credit'];
+            }
+            $account->save();
+        }
+
+        return redirect()->route('accounting.vouchers')
+            ->with('success', 'Voucher created successfully.');
+    }
+
     public function trialBalance()
     {
         $accounts = Account::with(['debitVouchers', 'creditVouchers'])->get();

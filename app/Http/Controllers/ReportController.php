@@ -11,9 +11,67 @@ use App\Models\Customer;
 use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class ReportController extends Controller
 {
+    public function index()
+    {
+        // Get summary data for the dashboard
+        $today = Carbon::today();
+        $startOfMonth = Carbon::now()->startOfMonth();
+        $endOfMonth = Carbon::now()->endOfMonth();
+
+        // Sales Summary
+        $todaySales = Sale::whereDate('sale_date', $today)
+            ->where('sale_status', 'completed')
+            ->sum('total_amount');
+
+        $monthSales = Sale::whereBetween('sale_date', [$startOfMonth, $endOfMonth])
+            ->where('sale_status', 'completed')
+            ->sum('total_amount');
+
+        $totalSales = Sale::where('sale_status', 'completed')->sum('total_amount');
+
+        // Purchase Summary
+        $todayPurchases = Purchase::whereDate('purchase_date', $today)->sum('total_amount');
+        $monthPurchases = Purchase::whereBetween('purchase_date', [$startOfMonth, $endOfMonth])->sum('total_amount');
+        $totalPurchases = Purchase::sum('total_amount');
+
+        // Stock Summary
+        $lowStockItems = Item::whereRaw('current_stock <= min_stock')->count();
+        $lowStockProducts = Product::whereRaw('current_stock <= min_stock')->count();
+        $outOfStockItems = Item::where('current_stock', '<=', 0)->count();
+        $outOfStockProducts = Product::where('current_stock', '<=', 0)->count();
+
+        // Recent Activities
+        $recentSales = Sale::with('customer')
+            ->where('sale_status', 'completed')
+            ->orderBy('sale_date', 'desc')
+            ->limit(5)
+            ->get();
+
+        $recentPurchases = Purchase::with('vendor')
+            ->orderBy('purchase_date', 'desc')
+            ->limit(5)
+            ->get();
+
+        return view('reports.index', compact(
+            'todaySales',
+            'monthSales',
+            'totalSales',
+            'todayPurchases',
+            'monthPurchases',
+            'totalPurchases',
+            'lowStockItems',
+            'lowStockProducts',
+            'outOfStockItems',
+            'outOfStockProducts',
+            'recentSales',
+            'recentPurchases'
+        ));
+    }
+
     public function salesReport(Request $request)
     {
         $startDate = $request->start_date ?? now()->startOfMonth()->format('Y-m-d');
@@ -44,55 +102,87 @@ class ReportController extends Controller
         return view('reports.stock', compact('items', 'products'));
     }
 
+    // public function purchaseReport(Request $request)
+    // {
+    //     $startDate = $request->start_date ?? now()->startOfMonth()->format('Y-m-d');
+    //     $endDate = $request->end_date ?? now()->endOfMonth()->format('Y-m-d');
+
+    //     $purchases = Purchase::with(['vendor', 'purchaseItems.item'])
+    //         ->whereBetween('purchase_date', [$startDate, $endDate])
+    //         ->orderBy('purchase_date', 'desc')
+    //         ->get();
+
+    //     $totalPurchases = $purchases->sum('total_amount');
+
+    //     return view('reports.purchases', compact('purchases', 'totalPurchases', 'startDate', 'endDate'));
+    // }
     public function purchaseReport(Request $request)
-    {
-        $startDate = $request->start_date ?? now()->startOfMonth()->format('Y-m-d');
-        $endDate = $request->end_date ?? now()->endOfMonth()->format('Y-m-d');
-
-        $purchases = Purchase::with(['vendor', 'purchaseItems.item'])
-            ->whereBetween('purchase_date', [$startDate, $endDate])
-            ->orderBy('purchase_date', 'desc')
-            ->get();
-
-        $totalPurchases = $purchases->sum('total_amount');
-
-        return view('reports.purchases', compact('purchases', 'totalPurchases', 'startDate', 'endDate'));
-    }
-
-    public function productionReport(Request $request)
-    {
-        $startDate = $request->start_date ?? now()->startOfMonth()->format('Y-m-d');
-        $endDate = $request->end_date ?? now()->endOfMonth()->format('Y-m-d');
-
-        $productions = ProductionRun::with(['billOfMaterial.product'])
-            ->whereBetween('production_date', [$startDate, $endDate])
-            ->orderBy('production_date', 'desc')
-            ->get();
-
-        return view('reports.production', compact('productions', 'startDate', 'endDate'));
-    }
-
-  public function lowStockReport()
 {
-    $lowStockItems = Item::whereRaw('current_stock <= min_stock')
-        ->orderBy('current_stock', 'asc')
+    $startDate = $request->start_date ?? now()->startOfMonth()->format('Y-m-d');
+    $endDate = $request->end_date ?? now()->endOfMonth()->format('Y-m-d');
+
+    $purchases = Purchase::with(['vendor', 'purchaseItems.item'])
+        ->when($request->vendor_id, function($query, $vendorId) {
+            return $query->where('vendor_id', $vendorId);
+        })
+        ->whereBetween('purchase_date', [$startDate, $endDate])
+        ->orderBy('purchase_date', 'desc')
         ->get();
 
-    $lowStockProducts = Product::whereRaw('current_stock <= min_stock')
-        ->orderBy('current_stock', 'asc')
-        ->get();
+    $totalPurchases = $purchases->sum('total_amount');
 
-    // Also get out of stock items for the summary
-    $outOfStockItems = Item::where('current_stock', '<=', 0)->get();
-    $outOfStockProducts = Product::where('current_stock', '<=', 0)->get();
+    // Get vendors for the filter dropdown
+    $vendors = Vendor::orderBy('name')->get();
 
-    return view('reports.low-stock', compact(
-        'lowStockItems',
-        'lowStockProducts',
-        'outOfStockItems',
-        'outOfStockProducts'
-    ));
+    return view('reports.purchases', compact('purchases', 'totalPurchases', 'startDate', 'endDate', 'vendors'));
 }
+
+    // public function productionReport(Request $request)
+    // {
+    //     $startDate = $request->start_date ?? now()->startOfMonth()->format('Y-m-d');
+    //     $endDate = $request->end_date ?? now()->endOfMonth()->format('Y-m-d');
+
+    //     $productions = ProductionRun::with(['billOfMaterial.product'])
+    //         ->whereBetween('production_date', [$startDate, $endDate])
+    //         ->orderBy('production_date', 'desc')
+    //         ->get();
+
+    //     return view('reports.production', compact('productions', 'startDate', 'endDate'));
+    // }
+    public function productionReport(Request $request)
+{
+    $startDate = $request->start_date ?? now()->startOfMonth()->format('Y-m-d');
+    $endDate = $request->end_date ?? now()->endOfMonth()->format('Y-m-d');
+
+    $productions = ProductionRun::with(['billOfMaterial.product'])
+        ->whereBetween('production_date', [$startDate, $endDate])
+        ->orderBy('production_date', 'desc')
+        ->get();
+
+    return view('reports.production', compact('productions', 'startDate', 'endDate'));
+}
+
+    public function lowStockReport()
+    {
+        $lowStockItems = Item::whereRaw('current_stock <= min_stock')
+            ->orderBy('current_stock', 'asc')
+            ->get();
+
+        $lowStockProducts = Product::whereRaw('current_stock <= min_stock')
+            ->orderBy('current_stock', 'asc')
+            ->get();
+
+        $outOfStockItems = Item::where('current_stock', '<=', 0)->get();
+        $outOfStockProducts = Product::where('current_stock', '<=', 0)->get();
+
+        return view('reports.low-stock', compact(
+            'lowStockItems',
+            'lowStockProducts',
+            'outOfStockItems',
+            'outOfStockProducts'
+        ));
+    }
+
     public function stockValuation()
     {
         $items = Item::select('*',

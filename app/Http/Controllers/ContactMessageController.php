@@ -10,7 +10,6 @@ class ContactMessageController extends Controller
     public function index()
     {
         $messages = ContactMessage::latest()->paginate(10);
-
         return view('admin.messages.index', compact('messages'));
     }
 
@@ -21,6 +20,10 @@ class ContactMessageController extends Controller
 
     public function update(Request $request, ContactMessage $message)
     {
+        $request->validate([
+            'status' => 'required|in:read,unread'
+        ]);
+
         $message->update($request->only('status'));
 
         return redirect()->route('admin.messages.index')

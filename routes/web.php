@@ -105,6 +105,7 @@ Route::get('/products/out-of-stock', [ProductController::class, 'outOfStock'])->
 
     // Reports Routes
     Route::prefix('reports')->name('reports.')->group(function () {
+          Route::get('/', [ReportController::class, 'index'])->name('index'); // Add this line
         Route::get('sales', [ReportController::class, 'salesReport'])->name('sales');
         Route::get('stock', [ReportController::class, 'stockReport'])->name('stock');
         Route::get('purchases', [ReportController::class, 'purchaseReport'])->name('purchases');
@@ -132,8 +133,6 @@ Route::get('/products/out-of-stock', [ProductController::class, 'outOfStock'])->
             // Company Information
             Route::get('/company', [WebsiteSettingsController::class, 'company'])->name('company.index');
             Route::post('/company', [WebsiteSettingsController::class, 'updateCompany'])->name('company.update');
-
-            // Service Products Management (Frontend Website Products)
             Route::get('/service-products', [ServiceProductController::class, 'index'])->name('service-products.index');
             Route::get('/service-products/create', [ServiceProductController::class, 'create'])->name('service-products.create');
             Route::post('/service-products', [ServiceProductController::class, 'store'])->name('service-products.store');

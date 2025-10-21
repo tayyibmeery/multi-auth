@@ -184,6 +184,13 @@
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
+                     <li class="nav-item">
+                         <a href="{{ route('reports.index') }}" class="nav-link {{ request()->routeIs('reports.index') ? 'active' : '' }}">
+                             <i class="far fa-circle nav-icon"></i>
+                             <p> Report</p>
+                         </a>
+                     </li>
+
                         <li class="nav-item">
                             <a href="{{ route('reports.stock') }}" class="nav-link {{ request()->routeIs('reports.stock') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>

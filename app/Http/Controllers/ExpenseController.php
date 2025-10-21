@@ -14,7 +14,12 @@ class ExpenseController extends Controller
             ->orderBy('expense_date', 'desc')
             ->paginate(20);
 
-        return view('expenses.index', compact('expenses'));
+        // Calculate total amount for statistics
+        $totalAmount = Expense::sum('amount');
+        $officeSuppliesCount = Expense::where('category', 'office_supplies')->count();
+        $utilitiesCount = Expense::where('category', 'utilities')->count();
+
+        return view('expenses.index', compact('expenses', 'totalAmount', 'officeSuppliesCount', 'utilitiesCount'));
     }
 
     public function create()

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
@@ -35,13 +36,18 @@ class ServiceProductController extends Controller
         ]);
 
         $validated['slug'] = Str::slug($validated['name']);
-        $validated['features'] = json_encode(explode("\n", $validated['features']));
+
+        // Corrected features handling
+        $features = array_filter(array_map('trim', explode("\n", $validated['features'])));
+        $validated['features'] = json_encode($features);
+
         $validated['is_featured'] = $request->has('is_featured');
         $validated['is_active'] = $request->has('is_active');
 
         ServiceProduct::create($validated);
 
-        return redirect()->route('admin.service-products.index')->with('success', 'Service product created successfully.');
+        return redirect()->route('admin.service-products.index')
+            ->with('success', 'Service product created successfully.');
     }
 
     public function edit(ServiceProduct $serviceProduct)
@@ -65,18 +71,25 @@ class ServiceProductController extends Controller
         ]);
 
         $validated['slug'] = Str::slug($validated['name']);
-        $validated['features'] = json_encode(explode("\n", $validated['features']));
+
+        // Corrected features handling
+        $features = array_filter(array_map('trim', explode("\n", $validated['features'])));
+        $validated['features'] = json_encode($features);
+
         $validated['is_featured'] = $request->has('is_featured');
         $validated['is_active'] = $request->has('is_active');
 
         $serviceProduct->update($validated);
 
-        return redirect()->route('admin.service-products.index')->with('success', 'Service product updated successfully.');
+        return redirect()->route('admin.service-products.index')
+            ->with('success', 'Service product updated successfully.');
     }
 
     public function destroy(ServiceProduct $serviceProduct)
     {
         $serviceProduct->delete();
-        return redirect()->route('admin.service-products.index')->with('success', 'Service product deleted successfully.');
+
+        return redirect()->route('admin.service-products.index')
+            ->with('success', 'Service product deleted successfully.');
     }
 }

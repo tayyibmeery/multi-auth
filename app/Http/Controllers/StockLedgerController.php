@@ -32,15 +32,20 @@ class StockLedgerController extends Controller
         return view('stock-ledgers.index', compact('stockLedgers'));
     }
 
-    public function itemLedger($itemId)
+      public function itemLedger($itemId)
     {
         $item = \App\Models\Item::findOrFail($itemId);
+
         $ledgers = StockLedger::where('item_id', $itemId)
                             ->with('user')
                             ->latest()
                             ->paginate(20);
 
-        return view('stock-ledgers.item-ledger', compact('item', 'ledgers'));
+        // Calculate totals
+        $totalIn = StockLedger::where('item_id', $itemId)->sum('quantity_in');
+        $totalOut = StockLedger::where('item_id', $itemId)->sum('quantity_out');
+
+        return view('stock-ledgers.item', compact('item', 'ledgers', 'totalIn', 'totalOut'));
     }
 
     public function productLedger($productId)
@@ -51,6 +56,6 @@ class StockLedgerController extends Controller
                             ->latest()
                             ->paginate(20);
 
-        return view('stock-ledgers.product-ledger', compact('product', 'ledgers'));
+        return view('stock-ledgers.product', compact('product', 'ledgers'));
     }
 }

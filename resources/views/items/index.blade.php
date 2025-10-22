@@ -148,6 +148,12 @@
                                             <a href="{{ route('items.edit', $item) }}" class="btn btn-sm btn-warning" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
+
+                                             <!-- Add Stock Ledger Link -->
+                                             <a href="{{ route('stock-ledgers.item', $item->id) }}" class="btn btn-secondary btn-sm" title="Stock Ledger">
+                                                 <i class="fas fa-history"></i>
+                                             </a>
+
                                             <form action="{{ route('items.destroy', $item) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this spare part?')">
                                                 @csrf
                                                 @method("DELETE")

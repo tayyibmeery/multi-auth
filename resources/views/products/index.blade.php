@@ -144,6 +144,11 @@
                                             <a href="{{ route('products.edit', $product) }}" class="btn btn-sm btn-warning" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
+                                             <!-- Add Stock Ledger Link -->
+                                             <a href="{{ route('stock-ledgers.product', $product->id) }}" class="btn btn-secondary btn-sm" title="Stock Ledger">
+                                                 <i class="fas fa-history"></i>
+                                             </a>
+
                                             <form action="{{ route('products.destroy', $product) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this product?')">
                                                 @csrf
                                                 @method("DELETE")

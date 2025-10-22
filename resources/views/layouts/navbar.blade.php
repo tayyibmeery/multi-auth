@@ -21,9 +21,9 @@
         <li class="nav-item d-none d-sm-inline-block">
             <a href="{{ route('dashboard') }}" class="nav-link">Home</a>
         </li>
-        <li class="nav-item d-none d-sm-inline-block">
+        {{-- <li class="nav-item d-none d-sm-inline-block">
             <a href="#" class="nav-link">Contact</a>
-        </li>
+        </li> --}}
         @endauth
     </ul>
 
@@ -158,12 +158,12 @@
                     <div class="text-muted small">{{ auth()->user()->email ?? '' }}</div>
                 </div>
                 <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
+                {{-- <a href="#" class="dropdown-item">
                     <i class="fas fa-user mr-2"></i> Profile
                 </a>
                 <a href="#" class="dropdown-item">
                     <i class="fas fa-cog mr-2"></i> Settings
-                </a>
+                </a> --}}
                 <div class="dropdown-divider"></div>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
